@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Learn | GuardNode</title><link rel="icon" href="assets/icons/logo.svg"><link rel="stylesheet" href="style.css"></head><body><main class="wrap">
+<section class="hero"><h1>Learn the vocabulary</h1><p class="lead">Look up a term, then test your instincts with the phishing quiz.</p></section>
+<h2>Glossary</h2><input class="s" id="q" type="search" placeholder="Search terms" aria-label="Search glossary"><div class="grid" id="gloss"></div>
+<h2>Phish or legit?</h2><div class="card quiz"><p id="qtext"></p><div class="opts"><button type="button" id="yes">Phishing</button><button type="button" class="alt" id="no">Legit</button></div><div class="fb" id="fb" aria-live="polite"></div><p class="tag" id="score"></p></div>
+</main><script src="js/app.js"></script>
+<script>
+(() => {
+  "use strict";
+  const el = id => document.getElementById(id), g = el("gloss");
+  let terms = [];
+  function draw(f) {
+    g.innerHTML = "";
+    terms.filter(t => (t.term + t.definition).toLowerCase().includes(f)).forEach(t => {
+      const c = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
+      c.className = "card"; h.textContent = t.term; p.textContent = t.definition; c.append(h, p); g.append(c);
+    });
+  }
+  fetch("data/glossary.json").then(r => r.json()).then(d => { terms = d; draw(""); }).catch(() => { g.textContent = "Could not load glossary. Serve the folder over HTTP."; });
+  el("q").addEventListener("input", e => draw(e.target.value.toLowerCase()));
+  const Q = [["Email from support@paypa1-security.com: 'Verify your account in 24 hours or it is closed.'", true, "The domain swaps an L for a 1 and uses urgency."],
+    ["Your university IT notice links to the official portal you already use.", false, "You can verify it by typing the portal address yourself."],
+    ["A text says a parcel is held and asks for a card number to release it.", true, "Delivery firms do not ask for card details by text."]];
+  let i = 0, s = 0;
+  function show() {
+    if (i >= Q.length) { el("qtext").textContent = "Done. Score: " + s + "/" + Q.length; el("yes").hidden = el("no").hidden = true; return; }
+    el("qtext").textContent = Q[i][0]; el("fb").textContent = ""; el("fb").className = "fb";
+  }
+  function ans(v) {
+    if (i >= Q.length) return;
+    const ok = v === Q[i][1]; if (ok) s++;
+    el("fb").className = "fb " + (ok ? "ok" : "bad");
+    el("fb").textContent = (ok ? "Correct. " : "Not quite. ") + Q[i][2];
+    i++; el("score").textContent = "Score: " + s + "/" + i;
+    setTimeout(show, 1800);
+  }
+  el("yes").onclick = () => ans(true); el("no").onclick = () => ans(false);
+  show();
+})();
+</script></body></html>

@@ -1,0 +1,4 @@
+[{"title":"Why passkeys are replacing passwords","date":"2026-09-20","tag":"Authentication","summary":"Passkeys use public-key cryptography, so there is no shared secret to phish or leak."},
+{"title":"Credential stuffing, explained","date":"2026-09-12","tag":"Attacks","summary":"Attackers replay leaked logins across sites. Unique passwords stop it."},
+{"title":"Patch habits every student should have","date":"2026-09-03","tag":"Hygiene","summary":"Automatic updates close most known holes before attackers use them."},
+{"title":"Reading a phishing email header","date":"2026-08-28","tag":"Attacks","summary":"Mismatched Reply-To and Return-Path fields are quick tells."}]

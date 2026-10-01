@@ -1,0 +1,8 @@
+[{"term":"Brute force","definition":"Trying every possible combination until one works."},
+{"term":"Dictionary attack","definition":"Guessing from lists of common words and leaked passwords."},
+{"term":"Salt","definition":"Random data added to a password before hashing so equal passwords hash differently."},
+{"term":"Zero-day","definition":"A flaw that attackers know about before a patch exists."},
+{"term":"XSS","definition":"Cross-site scripting: injecting script into a page other users view."},
+{"term":"Credential stuffing","definition":"Replaying leaked logins on other sites."},
+{"term":"MFA","definition":"Multi-factor authentication: a second proof of identity beyond the password."},
+{"term":"Phishing","definition":"Tricking someone into giving up credentials through a fake message or site."}]
