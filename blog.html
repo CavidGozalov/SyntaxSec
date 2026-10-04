@@ -1,4 +1,44 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>News | GuardNode</title><link rel="icon" href="assets/icons/logo.svg"><link rel="stylesheet" href="style.css"></head><body><main class="wrap">
-<section class="hero"><h1>Security news</h1><p class="lead">Short reads for students. Filter by topic.</p></section>
-<div class="row" id="filters" role="group" aria-label="Filter by topic"></div><div class="grid" id="feed"><p>Loading articles...</p></div>
-</main><script src="js/app.js"></script><script src="js/blog.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News | SyntaxSec</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/icons/logo.svg">
+    
+    <!-- External CSS Stylesheets -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Supabase JavaScript Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Main Container -->
+    <main class="wrap">
+        
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Security news</h1>
+            <p class="lead">Short reads for students. Filter by topic.</p>
+        </section>
+
+        <!-- Filters Section -->
+        <div class="row" id="filters" role="group" aria-label="Filter by topic"></div>
+
+        <!-- Articles Feed Section -->
+        <div class="grid" id="feed">
+            <p>Loading articles...</p>
+        </div>
+
+    </main>
+
+    <!-- Application Scripts -->
+    <script src="js/supabase.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/blog.js"></script>
+
+</body>
+</html>

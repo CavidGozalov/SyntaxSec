@@ -1,6 +1,6 @@
 (() => {
   "use strict";
-  const GPS = 1e10; // offline guesses/second against a fast hash
+  const GPS = 1e10;
   const $ = id => document.getElementById(id);
   const pw = $("pw");
   if (!pw) return;

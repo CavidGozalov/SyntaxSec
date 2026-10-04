@@ -44,3 +44,138 @@ ul.chk li.ok::before{content:"\2713";color:var(--ok)}
 .fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
 footer{border-top:1px solid var(--line);background:var(--card);margin-top:56px;padding:24px 0;color:var(--dim);font-size:.9rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* Blog Card Grid & Layout */
+.card {
+    background: #1e293b !important;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    color: #f8fafc;
+}
+
+.card h3 {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    color: #f1f5f9;
+    font-size: 20px;
+}
+
+.card p {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+/* Tags */
+.card .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #312e81;
+    color: #818cf8;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.card .date {
+    display: block;
+    margin-top: 12px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+/* Reaction Buttons */
+.reaction-container, .comment-reactions {
+    margin-top: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.like-btn, .dislike-btn, .comment-like-btn, .comment-dislike-btn {
+    padding: 6px 12px;
+    cursor: pointer;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.like-btn:hover, .dislike-btn:hover, .comment-like-btn:hover, .comment-dislike-btn:hover {
+    background: #334155;
+    border-color: #64748b;
+}
+
+/* Comments Section */
+.comments-section {
+    margin-top: 20px;
+    border-top: 1px solid #334155;
+    padding-top: 16px;
+}
+
+.comments-section h4 {
+    font-size: 15px;
+    color: #f1f5f9;
+    margin-bottom: 12px;
+}
+
+.comment-item {
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.comment-form {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-form input, .comment-form textarea {
+    padding: 10px;
+    font-size: 13px;
+    background: #0f172a;
+    border: 1px solid #475569;
+    color: #f8fafc;
+    border-radius: 6px;
+    outline: none;
+}
+
+.comment-form input:focus, .comment-form textarea:focus {
+    border-color: #818cf8;
+}
+
+.comment-form textarea {
+    height: 70px;
+    resize: vertical;
+}
+
+.comment-submit-btn {
+    align-self: flex-start;
+    padding: 8px 16px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.comment-submit-btn:hover {
+    background: #4338ca;
+}
