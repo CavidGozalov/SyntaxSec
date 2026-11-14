@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home | SyntaxSec</title>
+    <meta name="description" content="Your SyntaxSec dashboard: term of the day, roadmap progress, bookmarks and tools.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="dashboard" data-access="user" data-title="dash.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 id="hello" data-i18n="dash.hello">Welcome back</h1>
+                <p class="lead" data-i18n="dash.lead">Pick up where you left off, or learn one new thing today.</p>
+            </section>
+            <div id="offline-note" class="notice" hidden style="margin-bottom:18px"><span>⚠️</span><span data-i18n="common.offline"></span></div>
+
+            <section class="daily" aria-labelledby="daily-title">
+                <span class="badge" data-i18n="dash.termOfDay">Term of the day</span>
+                <h2 id="daily-title" style="margin-top:12px">…</h2>
+                <p id="daily-summary"></p>
+                <div class="row" style="margin-bottom:18px">
+                    <a class="btn" id="daily-link" href="modules.html" data-i18n="dash.readDeep">Read the deep dive</a>
+                </div>
+                <p style="margin:0"><strong data-i18n="dash.quickTip">Quick security tip:</strong> <span id="tip-text"></span></p>
+                <div class="row" style="margin-top:12px">
+                    <button class="btn ghost sm" id="tip-next" type="button" data-i18n="dash.nextTip">Show another tip</button>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="stats">
+                    <div class="stat"><b id="st-mastered">0</b><span data-i18n="dash.stMastered">terms mastered</span></div>
+                    <div class="stat"><b id="st-bookmarks">0</b><span data-i18n="dash.stBookmarks">bookmarks</span></div>
+                    <div class="stat"><b id="st-terms">0</b><span data-i18n="dash.stTerms">terms in the library</span></div>
+                    <div class="stat"><b id="st-quiz">–</b><span data-i18n="dash.stQuiz">best quiz score</span></div>
+                </div>
+            </section>
+
+            <section class="section">
+                <div class="row between"><h2 style="margin:0" data-i18n="dash.roadmapsH">Your roadmaps</h2><a class="btn soft sm" href="roadmaps.html" data-i18n="dash.openRoadmaps">Open roadmaps</a></div>
+                <div class="grid" id="dash-tracks" style="margin-top:16px"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+            </section>
+
+            <section class="section">
+                <h2 data-i18n="dash.bookmarksH">Bookmarked terms</h2>
+                <div id="dash-bookmarks"></div>
+            </section>
+
+            <section class="section">
+                <h2 data-i18n="dash.toolsH">Jump into a tool</h2>
+                <div class="grid">
+                    <a class="card tint-sun" href="password-checker.html"><div class="emoji">🔑</div><h3 data-i18n="nav.password"></h3><p class="dim" data-i18n="dash.t1">Audit a password and generate a stronger one.</p></a>
+                    <a class="card tint-coral" href="phishing-checker.html"><div class="emoji">🎣</div><h3 data-i18n="nav.phishing"></h3><p class="dim" data-i18n="dash.t2">Check a suspicious email from text or a screenshot.</p></a>
+                    <a class="card" href="tools.html#link"><div class="emoji">🔗</div><h3 data-i18n="nav.link"></h3><p class="dim" data-i18n="dash.t3">Take a URL apart before you click it.</p></a>
+                    <a class="card tint-mint" href="quiz.html"><div class="emoji">🕵️</div><h3 data-i18n="dash.t4h">Spot the Fake</h3><p class="dim" data-i18n="dash.t4">Ten messages. Phishing or legit?</p></a>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

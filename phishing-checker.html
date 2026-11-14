@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Phishing Mail Checker | SyntaxSec</title>
+    <meta name="description" content="Paste an email or upload a screenshot and see which phishing indicators it contains.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="phishing" data-access="user" data-title="ph.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="ph.h1">Phishing Mail Checker</h1>
+                <p class="lead" data-i18n="ph.lead">Paste the text of a suspicious email — with headers if you have them — or upload a screenshot. You get a plain-language list of what looks wrong and what looks right.</p>
+            </section>
+
+            <div class="notice" role="note" style="margin-bottom:20px"><span>ℹ️</span><span data-i18n="ph.disclaimer">This is an automated indicator, not a guarantee. It can miss well-made phishing emails and can flag genuine ones. When in doubt, do not click: contact the sender through a phone number or website you already trust.</span></div>
+
+            <div class="split">
+                <div class="panel">
+                    <div class="tabs" role="tablist" id="ph-tabs" style="margin-bottom:16px">
+                        <button class="tab" type="button" role="tab" data-src="text" aria-selected="true">📝 <span data-i18n="ph.tabText">Paste text</span></button>
+                        <button class="tab" type="button" role="tab" data-src="image" aria-selected="false">🖼️ <span data-i18n="ph.tabImage">Upload screenshot</span></button>
+                    </div>
+
+                    <div id="src-image" hidden>
+                        <div class="drop" id="drop" tabindex="0" role="button" data-i18n-aria="ph.dropTitle">
+                            <span class="emoji">📷</span>
+                            <strong data-i18n="ph.dropTitle">Drop a screenshot or photo here, or click to choose</strong>
+                            <p class="small dim" style="margin:6px 0 0" data-i18n="ph.dropHint">PNG, JPG or WebP. You can also paste an image with Ctrl+V. Text is read on your device with Tesseract.js — the image is not uploaded.</p>
+                            <img id="preview" alt="" hidden>
+                        </div>
+                        <input type="file" id="file" accept="image/*" hidden>
+                        <div id="ocr-status" class="small" style="margin-top:12px" aria-live="polite" hidden>
+                            <div class="row between"><span id="ocr-label"></span><strong id="ocr-pct"></strong></div>
+                            <div class="bar" style="margin-top:6px"><i id="ocr-bar"></i></div>
+                        </div>
+                        <p class="small dim" style="margin:14px 0 6px" data-i18n="ph.ocrEdit">Extracted text appears below. Fix any reading mistakes, then analyse.</p>
+                    </div>
+
+                    <label for="mail" data-i18n="ph.label">Email text</label>
+                    <textarea id="mail" style="min-height:260px" spellcheck="false" data-i18n-ph="ph.ph" placeholder="From: …&#10;Subject: …&#10;&#10;Paste the full message here"></textarea>
+                    <div class="row" style="margin-top:12px">
+                        <button class="btn" type="button" id="ph-run">🔍 <span data-i18n="ph.run">Analyse email</span></button>
+                        <button class="btn ghost" type="button" id="ph-clear" data-i18n="common.clear">Clear</button>
+                    </div>
+                    <div class="row small" style="margin-top:12px"><span class="dim" data-i18n="ph.examples">Load an example:</span>
+                        <button class="chip" type="button" data-sample="bad" data-i18n="ph.exBad">Phishing email</button>
+                        <button class="chip" type="button" data-sample="good" data-i18n="ph.exGood">Legitimate email</button>
+                    </div>
+                </div>
+
+                <div class="panel" id="ph-result" aria-live="polite">
+                    <div class="empty"><span class="emoji">📬</span><span data-i18n="ph.idle">The analysis will appear here.</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/urlkit.js"></script>
+    <script src="js/phishing.js"></script>
+</body>
+</html>

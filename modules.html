@@ -1,75 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Learn | SyntaxSec</title>
-    <link rel="icon" href="assets/icons/logo.svg">
-    <link rel="stylesheet" href="style.css">
+    <meta name="description" content="Search cybersecurity and IT terms, browse topics and open deep-dive pages.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main class="wrap">
-        <section class="hero">
-            <h1>Learn the vocabulary</h1>
-            <p class="lead">Look up a term, then test your instincts with the phishing quiz.</p>
-        </section>
-        
-        <h2>Glossary</h2>
-        <input class="s" id="q" type="search" placeholder="Search terms" aria-label="Search glossary">
-        <div class="grid" id="gloss"></div>
-        
-        <h2>Phish or legit?</h2>
-        <div class="card quiz">
-            <p id="qtext"></p>
-            <div class="opts">
-                <button type="button" id="yes">Phishing</button>
-                <button type="button" class="alt" id="no">Legit</button>
+<body data-page="learn" data-access="user" data-title="learn.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="learn.h1">Learn the vocabulary of security</h1>
+                <p class="lead" data-i18n="learn.lead">Search any term, or open a topic and tap a term for a short explanation. Every term has a full deep-dive page.</p>
+            </section>
+            <div class="search">
+                <input id="q" type="search" autocomplete="off" data-i18n-ph="learn.searchPh" data-i18n-aria="learn.searchPh" placeholder="Search terms, e.g. phishing, hash, VPN…">
+                <span class="badge plain count" id="q-count" hidden></span>
             </div>
-            <div class="fb" id="fb" aria-live="polite"></div>
-            <p class="tag" id="score"></p>
+            <div id="offline-note" class="notice" hidden style="margin-top:18px"><span>⚠️</span><span data-i18n="common.offline"></span></div>
+
+            <section class="section" id="results-section" hidden>
+                <h2 data-i18n="learn.resultsH">Search results</h2>
+                <div id="results" class="stack"></div>
+            </section>
+
+            <section class="section" id="topics-section">
+                <div class="row between" style="margin-bottom:14px">
+                    <h2 style="margin:0" data-i18n="learn.topicsH">Topics</h2>
+                    <span class="dim small" id="topics-meta"></span>
+                </div>
+                <div id="topics"><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div></div>
+            </section>
         </div>
     </main>
-    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="script.js"></script>
-    <script>
-    (() => {
-      "use strict";
-      const el = id => document.getElementById(id), g = el("gloss");
-      let terms = [];
-      function draw(f) {
-        g.innerHTML = "";
-        terms.filter(t => (t.term + t.definition).toLowerCase().includes(f)).forEach(t => {
-          const c = document.createElement("div"), h = document.createElement("h3"), p = document.createElement("p");
-          c.className = "card"; h.textContent = t.term; p.textContent = t.definition; c.append(h, p); g.append(c);
-        });
-      }
-      fetch("data/glossary.json").then(r => r.json()).then(d => { terms = d; draw(""); }).catch(() => { g.textContent = "Could not load glossary. Serve the folder over HTTP."; });
-      el("q").addEventListener("input", e => draw(e.target.value.toLowerCase()));
-      const Q = [["Email from support@paypa1-security.com: 'Verify your account in 24 hours or it is closed.'", true, "The domain swaps an L for a 1 and uses urgency."],
-        ["Your university IT notice links to the official portal you already use.", false, "You can verify it by typing the portal address yourself."],
-        ["A text says a parcel is held and asks for a card number to release it.", true, "Delivery firms do not ask for card details by text."]];
-      let i = 0, s = 0;
-      function show() {
-        if (i >= Q.length) { el("qtext").textContent = "Done. Score: " + s + "/" + Q.length; el("yes").hidden = el("no").hidden = true; return; }
-        el("qtext").textContent = Q[i][0]; el("fb").textContent = ""; el("fb").className = "fb";
-      }
-      function ans(v) {
-        if (i >= Q.length) return;
-        const ok = v === Q[i][1]; if (ok) s++;
-        el("fb").className = "fb " + (ok ? "ok" : "bad");
-        el("fb").textContent = (ok ? "Correct. " : "Not quite. ") + Q[i][2];
-        i++; el("score").textContent = "Score: " + s + "/" + i;
-        setTimeout(show, 1800);
-      }
-      el("yes").onclick = () => ans(true); el("no").onclick = () => ans(false);
-      show();
-    })();
-    </script>
+    <script src="js/learn.js"></script>
 </body>
 </html>

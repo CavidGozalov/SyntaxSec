@@ -1,4 +1,46 @@
-[{"title":"Why passkeys are replacing passwords","date":"2026-09-20","tag":"Authentication","summary":"Passkeys use public-key cryptography, so there is no shared secret to phish or leak."},
-{"title":"Credential stuffing, explained","date":"2026-09-12","tag":"Attacks","summary":"Attackers replay leaked logins across sites. Unique passwords stop it."},
-{"title":"Patch habits every student should have","date":"2026-09-03","tag":"Hygiene","summary":"Automatic updates close most known holes before attackers use them."},
-{"title":"Reading a phishing email header","date":"2026-08-28","tag":"Attacks","summary":"Mismatched Reply-To and Return-Path fields are quick tells."}]
+[
+  {
+    "date": "2026-09-20",
+    "tag_en": "Authentication",
+    "tag_az": "Autentifikasiya",
+    "title_en": "Why passkeys are replacing passwords",
+    "title_az": "Passkey-lər niyə parolları əvəz edir",
+    "summary_en": "Passkeys use public-key cryptography, so there is no shared secret to phish or leak.",
+    "summary_az": "Passkey-lər açıq açarlı kriptoqrafiyadan istifadə edir, ona görə fişinqlə oğurlanacaq və ya sızacaq ortaq sirr yoxdur.",
+    "content_en": "Passwords have one built-in weakness: the same secret has to be known by you and stored by the website. It can be guessed, reused, phished or leaked.\n\n## What changes with a passkey\n\nYour device creates a key pair. The **private key** never leaves the device; the website keeps only the **public key**. To sign in, the device proves it holds the private key — usually after a fingerprint, face scan or PIN.\n\n## Why this matters\n\n- A breach of the website leaks nothing an attacker can log in with.\n- The key is tied to the real domain, so a look-alike site gets no valid answer.\n- There is nothing to remember and nothing to reuse.\n\n## What to do now\n\nTurn on passkeys where your email, bank and social accounts offer them, and keep a second sign-in method for the day you lose your phone.",
+    "content_az": "Parolların daxili bir zəifliyi var: eyni sirri həm siz bilməli, həm də sayt saxlamalıdır. O, təxmin edilə, təkrar istifadə oluna, fişinqlə oğurlana və ya sıza bilər.\n\n## Passkey ilə nə dəyişir\n\nCihazınız açar cütü yaradır. **Gizli açar** cihazı heç vaxt tərk etmir; sayt yalnız **açıq açarı** saxlayır. Daxil olmaq üçün cihaz gizli açara sahib olduğunu sübut edir — adətən barmaq izi, üz skanı və ya PIN-dən sonra.\n\n## Bu niyə vacibdir\n\n- Saytın sındırılması hücumçuya daxil ola biləcəyi heç nə vermir.\n- Açar əsl domenə bağlıdır, ona görə oxşar sayt etibarlı cavab ala bilmir.\n- Yadda saxlamağa və təkrar istifadə etməyə heç nə yoxdur.\n\n## İndi nə etməli\n\nE-poçt, bank və sosial hesablarınız təklif etdiyi yerdə passkey-ləri aktiv edin və telefonu itirəcəyiniz gün üçün ikinci giriş üsulu saxlayın."
+  },
+  {
+    "date": "2026-09-12",
+    "tag_en": "Attacks",
+    "tag_az": "Hücumlar",
+    "title_en": "Credential stuffing, explained",
+    "title_az": "Credential stuffing nədir",
+    "summary_en": "Attackers replay leaked logins across sites. Unique passwords stop it.",
+    "summary_az": "Hücumçular sızmış giriş məlumatlarını başqa saytlarda yoxlayır. Unikal parollar bunun qarşısını alır.",
+    "content_en": "Credential stuffing needs no hacking skill. The attacker downloads a list of email and password pairs from an old breach and lets a bot try them on other services.\n\n## Why it works\n\nMost people reuse passwords. If your forum password from years ago is also your email password, the attacker does not need to guess anything.\n\n## How to tell\n\n- Sign-in alerts from unfamiliar places\n- Password-reset emails you did not request\n- Accounts locked after many failed attempts\n\n## The fix\n\n1. Use a different password for every account — a password manager makes this practical.\n2. Turn on two-factor authentication.\n3. Check whether your passwords appear in breach data with the Password Audit tool.",
+    "content_az": "Credential stuffing haker bacarığı tələb etmir. Hücumçu köhnə sızmadan e-poçt və parol cütlərinin siyahısını yükləyir və botun onları başqa xidmətlərdə yoxlamasına imkan verir.\n\n## Niyə işləyir\n\nİnsanların çoxu parolları təkrar istifadə edir. İllər əvvəlki forum parolunuz həm də e-poçt parolunuzdursa, hücumçunun heç nə təxmin etməsinə ehtiyac yoxdur.\n\n## Necə bilmək olar\n\n- Tanış olmayan yerlərdən giriş bildirişləri\n- İstəmədiyiniz parol sıfırlama məktubları\n- Çoxlu uğursuz cəhddən sonra bloklanan hesablar\n\n## Həll\n\n1. Hər hesab üçün fərqli parol istifadə edin — parol meneceri bunu asanlaşdırır.\n2. İki faktorlu autentifikasiyanı aktiv edin.\n3. Parol Auditi aləti ilə parollarınızın sızma məlumatlarında olub-olmadığını yoxlayın."
+  },
+  {
+    "date": "2026-09-03",
+    "tag_en": "Hygiene",
+    "tag_az": "Gigiyena",
+    "title_en": "Patch habits every student should have",
+    "title_az": "Hər tələbənin sahib olmalı olduğu yeniləmə vərdişləri",
+    "summary_en": "Automatic updates close most known holes before attackers use them.",
+    "summary_az": "Avtomatik yeniləmələr məlum boşluqların çoxunu hücumçular istifadə etməmişdən əvvəl bağlayır.",
+    "content_en": "Most successful attacks do not use secret, unknown flaws. They use holes that were fixed months ago on devices nobody updated.\n\n## Four habits\n\n- **Turn on automatic updates** for the operating system, browser and phone.\n- **Restart when asked.** Many patches apply only after a restart.\n- **Remove what you do not use.** Every installed program is something else to keep patched.\n- **Replace what is no longer supported.** A phone that stopped receiving updates is permanently exposed.\n\n## Do not forget\n\nRouters, smart TVs and cameras need updates too. Check the router’s admin page a few times a year.",
+    "content_az": "Uğurlu hücumların çoxu gizli, naməlum boşluqlardan istifadə etmir. Onlar aylar əvvəl düzəldilmiş, amma heç kimin yeniləmədiyi cihazlardakı boşluqlardan istifadə edir.\n\n## Dörd vərdiş\n\n- Əməliyyat sistemi, brauzer və telefon üçün **avtomatik yeniləmələri aktiv edin**.\n- **Tələb olunanda yenidən başladın.** Bir çox düzəliş yalnız yenidən başlatdıqdan sonra tətbiq olunur.\n- **İstifadə etmədiyinizi silin.** Quraşdırılmış hər proqram yenilənməli olan daha bir şeydir.\n- **Dəstəklənməyəni əvəz edin.** Yeniləmə almayan telefon həmişəlik müdafiəsiz qalır.\n\n## Unutmayın\n\nMarşrutizatorların, smart televizorların və kameraların da yeniləməyə ehtiyacı var. Marşrutizatorun idarəetmə səhifəsini ildə bir neçə dəfə yoxlayın."
+  },
+  {
+    "date": "2026-08-28",
+    "tag_en": "Attacks",
+    "tag_az": "Hücumlar",
+    "title_en": "Reading a phishing email header",
+    "title_az": "Fişinq məktubunun başlığını oxumaq",
+    "summary_en": "Mismatched Reply-To and Return-Path fields are quick tells.",
+    "summary_az": "Uyğun gəlməyən Reply-To və Return-Path sahələri fişinqi tez ələ verir.",
+    "content_en": "The part of an email you normally see can be faked easily. The full headers tell a more honest story.\n\n## Four lines to check\n\n- **From** — the address, not the display name. `Sama Bank <alert@sama-bank-az.com>` is not the bank.\n- **Reply-To** — if replies go to a different domain, ask why.\n- **Return-Path** — the address that actually sent the message.\n- **Authentication-Results** — look for `spf=pass`, `dkim=pass` and `dmarc=pass`. A `fail` means the sender address may be forged.\n\n## Try it\n\nOpen a message, choose “Show original” or “View source”, copy the headers and paste them into the Phishing Mail Checker.",
+    "content_az": "Məktubun adətən gördüyünüz hissəsini saxtalaşdırmaq asandır. Tam başlıqlar isə daha dürüst mənzərə göstərir.\n\n## Yoxlanılmalı dörd sətir\n\n- **From** — göstərilən ad yox, ünvan. `Səma Bank <alert@sama-bank-az.com>` bank deyil.\n- **Reply-To** — cavablar başqa domenə gedirsə, səbəbini soruşun.\n- **Return-Path** — mesajı əslində göndərən ünvan.\n- **Authentication-Results** — `spf=pass`, `dkim=pass` və `dmarc=pass` axtarın. `fail` göndərən ünvanın saxtalaşdırıla biləcəyini göstərir.\n\n## Yoxlayın\n\nMesajı açın, “Orijinalı göstər” və ya “Mənbəyə bax” seçin, başlıqları kopyalayın və Fişinq Məktub Yoxlayıcısına yapışdırın."
+  }
+]

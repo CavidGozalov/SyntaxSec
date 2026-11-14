@@ -1,35 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News | SyntaxSec</title>
-    <link rel="icon" href="assets/icons/logo.svg">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Blog | SyntaxSec</title>
+    <meta name="description" content="Short security reads for students, in English and Azerbaijani.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main class="wrap">
-        <section class="hero">
-            <h1>Security news</h1>
-            <p class="lead">Short reads for students. Filter by topic.</p>
-        </section>
+<body data-page="blog" data-access="user" data-title="blog.title">
+    <main>
+        <div class="wrap">
+            <div class="print-only print-head"><img src="assets/icons/logo.svg" alt=""> SyntaxSec <span data-i18n="common.cheatsheet"></span></div>
 
-        <div class="row" id="filters" role="group" aria-label="Filter by topic"></div>
+            <div id="blog-list">
+                <section class="page-head">
+                    <h1 data-i18n="blog.h1">Security blog</h1>
+                    <p class="lead" data-i18n="blog.lead">Short reads for students. Filter by topic, open a post, print it as a study sheet.</p>
+                </section>
+                <div id="offline-note" class="notice" hidden style="margin-bottom:18px"><span>⚠️</span><span data-i18n="common.offline"></span></div>
+                <div class="chips" id="filters" role="group" data-i18n-aria="blog.filter" style="margin-bottom:20px"></div>
+                <div class="grid" id="feed"><div class="skeleton" style="min-height:170px"></div><div class="skeleton" style="min-height:170px"></div><div class="skeleton" style="min-height:170px"></div></div>
+            </div>
 
-        <div class="grid" id="feed">
-            <p>Loading articles...</p>
+            <article id="blog-post" hidden style="padding-top:34px"></article>
         </div>
     </main>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/blog.js"></script>
     <script src="script.js"></script>
+    <script src="js/blog.js"></script>
 </body>
 </html>

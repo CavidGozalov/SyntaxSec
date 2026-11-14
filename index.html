@@ -1,50 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Home | SyntaxSec</title>
-    <link rel="icon" href="assets/icons/logo.svg">
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome | SyntaxSec</title>
+    <meta name="description" content="SyntaxSec is an interactive cybersecurity and IT learning platform with a glossary, roadmaps and hands-on security tools.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                for (var i = 0; i < localStorage.length; i++) { if (/^sb-.*-auth-token$/.test(localStorage.key(i))) d.classList.add('auth-pending'); }
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
     </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <main class="wrap">
+<body data-page="home" data-access="public" data-title="home.title">
+    <main>
         <section class="hero">
-            <h1>Test your security. Share nothing.</h1>
-            <p class="lead">SyntaxSec is a privacy-first toolkit for IT students. Every check runs in your browser, with no accounts and no database.</p>
-            <div class="probe">
-                <label for="pw">Try a password. It stays in this tab.</label>
-                <input class="pw" id="pw" type="password" autocomplete="off" spellcheck="false">
-                <div class="meter" id="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-label="Strength">
-                    <div id="fill"></div>
+            <div class="wrap">
+                <div>
+                    <span class="badge mint" data-i18n="home.badge">Free for students · English and Azerbaijani</span>
+                    <h1 data-i18n="home.h1" style="margin-top:16px">Learn to spot the attack before it lands.</h1>
+                    <p class="lead" data-i18n="home.lead">SyntaxSec is an interactive cybersecurity and IT learning platform. Look up any term, follow a guided roadmap, and practise with tools that audit passwords, inspect links and flag phishing emails — right in your browser.</p>
+                    <div class="row">
+                        <button class="btn lg" type="button" data-open-auth="register" data-i18n="nav.start">Get started</button>
+                        <button class="btn lg ghost" type="button" data-open-auth="login" data-i18n="home.haveAccount">I already have an account</button>
+                    </div>
+                    <ul class="feature-list">
+                        <li data-i18n="home.f1">Searchable glossary with deep dives</li>
+                        <li data-i18n="home.f2">Progress saved to your account</li>
+                        <li data-i18n="home.f3">Passwords never leave your device</li>
+                    </ul>
                 </div>
-                <p id="verdict" aria-live="polite">Type to start the audit.</p>
-                <a href="password-checker.html">See the full audit</a>
+                <div class="panel hero-demo">
+                    <label for="probe" data-i18n="home.probeLabel">Try it: type a password. It stays in this tab.</label>
+                    <input id="probe" class="mono" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="home.probePh" placeholder="e.g. Baku2024!">
+                    <div class="segments" id="probe-seg" style="margin:14px 0 10px" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+                    <p id="probe-verdict" class="small" aria-live="polite" style="font-weight:600;margin-bottom:4px" data-i18n="home.probeIdle">Start typing to see a quick estimate.</p>
+                    <p id="probe-why" class="small dim" style="margin:0;min-height:2.9em"></p>
+                    <hr style="margin:16px 0">
+                    <p class="small dim" style="margin:0" data-i18n="home.probeMore">The full Password Audit inside adds zxcvbn pattern detection, crack-time estimates and a private breach check.</p>
+                </div>
             </div>
         </section>
-        <div class="grid">
-            <div class="card">
-                <h3>Password audit</h3>
-                <p>Entropy, crack-time estimate and a local breach-list check.</p>
+
+        <section class="section">
+            <div class="wrap">
+                <h2 data-i18n="home.insideH">What you get inside</h2>
+                <p class="dim" style="max-width:62ch" data-i18n="home.insideP">One account opens the learning hub and every tool. Pick a card to create your account and start there.</p>
+                <div class="grid" style="margin-top:20px">
+                    <a class="card" href="?auth=register" data-open-auth="register"><div class="emoji">📚</div><h3 data-i18n="home.c1h">Learn hub</h3><p class="dim" data-i18n="home.c1p">Topics, short explanations and full deep-dive pages for every term, with bookmarks and a mastered tracker.</p></a>
+                    <a class="card tint-mint" href="?auth=register" data-open-auth="register"><div class="emoji">🗺️</div><h3 data-i18n="home.c2h">Roadmaps</h3><p class="dim" data-i18n="home.c2p">Beginner-to-advanced study tracks with progress bars: Digital Hygiene 101, Web Security Basics, Network Defense.</p></a>
+                    <a class="card tint-sun" href="?auth=register" data-open-auth="register"><div class="emoji">🔑</div><h3 data-i18n="home.c3h">Password Audit</h3><p class="dim" data-i18n="home.c3p">Realistic strength analysis, breach lookup with k-anonymity, and a password and passphrase generator.</p></a>
+                    <a class="card tint-coral" href="?auth=register" data-open-auth="register"><div class="emoji">🎣</div><h3 data-i18n="home.c4h">Phishing Mail Checker</h3><p class="dim" data-i18n="home.c4p">Paste an email or upload a screenshot and get the red flags explained one by one.</p></a>
+                    <a class="card" href="?auth=register" data-open-auth="register"><div class="emoji">🕵️</div><h3 data-i18n="home.c5h">Spot the Fake quiz</h3><p class="dim" data-i18n="home.c5p">Ten real-looking emails and SMS messages, including local bank and delivery scams. Phishing or legit?</p></a>
+                    <a class="card tint-mint" href="?auth=register" data-open-auth="register"><div class="emoji">🧰</div><h3 data-i18n="home.c6h">Student lab tools</h3><p class="dim" data-i18n="home.c6p">Link Inspector, Hash and Encoding Playground, and a live TOTP simulator that shows how 2FA codes work.</p></a>
+                </div>
             </div>
-            <div class="card">
-                <h3>Learn</h3>
-                <p>A searchable glossary and a phishing quiz.</p>
+        </section>
+
+        <section class="section">
+            <div class="wrap">
+                <h2 data-i18n="home.howH">How it works</h2>
+                <div class="grid" style="margin-top:18px">
+                    <div class="card"><span class="badge">1</span><h3 style="margin-top:10px" data-i18n="home.s1h">Create a free account</h3><p class="dim" data-i18n="home.s1p">Pick a username, enter your email and a password. That is all we ask for.</p></div>
+                    <div class="card"><span class="badge">2</span><h3 style="margin-top:10px" data-i18n="home.s2h">Follow a roadmap</h3><p class="dim" data-i18n="home.s2p">Open topics, read the short explanation, then the deep dive. Mark terms as mastered as you go.</p></div>
+                    <div class="card"><span class="badge">3</span><h3 style="margin-top:10px" data-i18n="home.s3h">Practise on real cases</h3><p class="dim" data-i18n="home.s3p">Audit a password, take a link apart, check a suspicious email and test yourself with the quiz.</p></div>
+                </div>
+                <div class="center" style="margin-top:32px">
+                    <button class="btn lg" type="button" data-open-auth="register" data-i18n="nav.start">Get started</button>
+                </div>
             </div>
-            <div class="card">
-                <h3>News</h3>
-                <p>Short security articles you can filter by topic.</p>
-            </div>
-        </div>
+        </section>
     </main>
 
+    <div class="modal" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+        <div class="modal-box">
+            <button class="icon-btn modal-close" type="button" data-close data-i18n-aria="common.close">✕</button>
+            <div class="tabs" role="tablist" style="margin-bottom:18px">
+                <button class="tab" type="button" role="tab" data-auth-tab="register" aria-selected="true" data-i18n="auth.register">Register</button>
+                <button class="tab" type="button" role="tab" data-auth-tab="login" aria-selected="false" data-i18n="auth.login">Log in</button>
+            </div>
+            <h2 id="auth-title" data-i18n="auth.registerTitle">Create your account</h2>
+            <p class="dim small" id="auth-sub" data-i18n="auth.registerSub">Free for students. Your progress is saved to your account.</p>
+            <form id="auth-form" novalidate>
+                <div class="field" id="auth-username-field">
+                    <label for="auth-username" data-i18n="auth.username">Username</label>
+                    <input id="auth-username" type="text" autocomplete="username" minlength="3" maxlength="24" required>
+                    <div class="hint" data-i18n="auth.userHint">3–24 characters: letters, numbers, dot, dash or underscore.</div>
+                </div>
+                <div class="field">
+                    <label for="auth-email" data-i18n="auth.email">Email</label>
+                    <input id="auth-email" type="email" autocomplete="email" required>
+                </div>
+                <div class="field">
+                    <label for="auth-password" data-i18n="auth.password">Password</label>
+                    <input id="auth-password" type="password" autocomplete="new-password" minlength="8" required>
+                    <div class="hint" id="auth-pw-hint" data-i18n="auth.pwHint">At least 8 characters.</div>
+                </div>
+                <button class="btn block lg" id="auth-submit" type="submit" data-i18n="auth.submitRegister">Create account</button>
+                <p class="form-msg" id="auth-msg" role="status" aria-live="polite"></p>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
-    <script src="js/checker.js"></script>
     <script src="script.js"></script>
+    <script src="js/home.js"></script>
 </body>
 </html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spot the Fake | SyntaxSec</title>
+    <meta name="description" content="Interactive phishing quiz: decide whether each email or SMS is real or a scam.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="quiz" data-access="user" data-title="quiz.title">
+    <main>
+        <div class="wrap narrow">
+            <section class="page-head">
+                <h1 data-i18n="quiz.h1">Spot the Fake</h1>
+                <p class="lead" data-i18n="quiz.lead">Ten emails and SMS messages. Some are genuine, some are scams. Decide for each one, then see what gave it away.</p>
+            </section>
+            <div id="quiz-root"></div>
+            <p class="small dim" style="margin-top:18px" data-i18n="quiz.note">Company names, addresses and people in this quiz are invented for training.</p>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/quiz.js"></script>
+</body>
+</html>

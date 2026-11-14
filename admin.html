@@ -1,86 +1,137 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - New Blog Post</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin | SyntaxSec</title>
+    <meta name="description" content="SyntaxSec content management: topics, terms, blog posts and bulk import.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
     <script>
-        if (localStorage.getItem('theme') === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
     </script>
-    <style>
-        .container { max-width: 600px; margin: 50px auto; background: var(--card); padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid var(--line); }
-        h2 { margin-bottom: 20px; color: var(--ink); }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--dim); }
-        input[type="text"], textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--line); border-radius: 4px; box-sizing: border-box; background: var(--bg); color: var(--ink); }
-        textarea { height: 150px; resize: vertical; }
-        #statusMessage { margin-top: 15px; font-weight: bold; }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container">
-        <h2>Admin Panel: Add New Post</h2>
-        
-        <form id="blogForm">
-            <label for="title">Article Title:</label>
-            <input type="text" id="title" required placeholder="e.g., Introduction to Cybersecurity">
+<body data-page="admin" data-access="admin" data-title="adm.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="adm.h1">Content management</h1>
+                <p class="lead" data-i18n="adm.lead">Add, edit and delete topics, terms and blog posts in English and Azerbaijani, or import many terms at once.</p>
+            </section>
 
-            <label for="tag">Topic / Tag:</label>
-            <input type="text" id="tag" required placeholder="e.g., Attacks, Hygiene, Authentication">
+            <div class="tabs" role="tablist" id="adm-tabs">
+                <button class="tab" type="button" role="tab" data-tab="topics" aria-selected="true">🗂️ <span data-i18n="adm.tabTopics">Topics</span></button>
+                <button class="tab" type="button" role="tab" data-tab="terms" aria-selected="false">📖 <span data-i18n="adm.tabTerms">Terms</span></button>
+                <button class="tab" type="button" role="tab" data-tab="blogs" aria-selected="false">📰 <span data-i18n="adm.tabBlogs">Blog posts</span></button>
+                <button class="tab" type="button" role="tab" data-tab="import" aria-selected="false">📥 <span data-i18n="adm.tabImport">Bulk import</span></button>
+                <button class="tab" type="button" role="tab" data-tab="users" aria-selected="false">👥 <span data-i18n="adm.tabUsers">Users</span></button>
+            </div>
 
-            <label for="content">Content:</label>
-            <textarea id="content" required placeholder="Write your article content here..."></textarea>
+            <section class="section tab-panel" id="tab-topics">
+                <div class="row between" style="margin-bottom:14px"><h2 style="margin:0" data-i18n="adm.tabTopics">Topics</h2><button class="btn" type="button" data-new="topics">＋ <span data-i18n="adm.newTopic">New topic</span></button></div>
+                <div class="table-wrap"><table class="data"><thead><tr><th data-i18n="adm.colTopic">Topic</th><th>Slug</th><th data-i18n="adm.colTrack">Roadmap</th><th data-i18n="adm.colOrder">Order</th><th data-i18n="adm.colTerms">Terms</th><th></th></tr></thead><tbody id="rows-topics"></tbody></table></div>
+            </section>
 
-            <button type="submit" class="btn">Publish Post</button>
-        </form>
+            <section class="section tab-panel" id="tab-terms" hidden>
+                <div class="row between" style="margin-bottom:14px"><h2 style="margin:0" data-i18n="adm.tabTerms">Terms</h2><button class="btn" type="button" data-new="terms">＋ <span data-i18n="adm.newTerm">New term</span></button></div>
+                <div class="row" style="margin-bottom:14px">
+                    <input class="grow" id="term-search" type="search" data-i18n-ph="adm.searchTerms" data-i18n-aria="adm.searchTerms" placeholder="Search terms…" style="min-width:200px">
+                    <select id="term-filter" style="width:auto;max-width:280px" data-i18n-aria="adm.filterTopic"></select>
+                </div>
+                <div class="table-wrap"><table class="data"><thead><tr><th data-i18n="adm.colTerm">Term</th><th data-i18n="adm.colTopic">Topic</th><th data-i18n="adm.colLangs">Languages</th><th></th></tr></thead><tbody id="rows-terms"></tbody></table></div>
+            </section>
 
-        <p id="statusMessage"></p>
+            <section class="section tab-panel" id="tab-blogs" hidden>
+                <div class="row between" style="margin-bottom:14px"><h2 style="margin:0" data-i18n="adm.tabBlogs">Blog posts</h2><button class="btn" type="button" data-new="blogs">＋ <span data-i18n="adm.newBlog">New post</span></button></div>
+                <div class="table-wrap"><table class="data"><thead><tr><th data-i18n="adm.colTitle">Title</th><th data-i18n="adm.colTag">Tag</th><th data-i18n="adm.colDate">Date</th><th data-i18n="adm.colStatus">Status</th><th></th></tr></thead><tbody id="rows-blogs"></tbody></table></div>
+            </section>
+
+            <section class="section tab-panel" id="tab-import" hidden>
+                <div class="split">
+                    <div class="panel">
+                        <h2 data-i18n="adm.importH">Bulk import terms</h2>
+                        <p class="dim" data-i18n="adm.importP">Upload a JSON or CSV file, or paste its contents. Existing topics and terms with the same slug are updated, new ones are created, and missing topics are created automatically.</p>
+                        <div class="row" style="margin-bottom:12px">
+                            <button class="btn ghost sm" type="button" id="imp-file-btn">📎 <span data-i18n="adm.chooseFile">Choose a .json or .csv file</span></button>
+                            <input type="file" id="imp-file" accept=".json,.csv,application/json,text/csv" hidden>
+                            <span class="small dim" id="imp-file-name"></span>
+                        </div>
+                        <textarea id="imp-text" class="mono" spellcheck="false" style="min-height:240px;font-size:.84rem" data-i18n-ph="adm.importPh" placeholder="Paste JSON or CSV here…"></textarea>
+                        <div class="row" style="margin-top:12px">
+                            <button class="btn ghost" type="button" id="imp-preview" data-i18n="adm.preview">Check the file</button>
+                            <button class="btn" type="button" id="imp-run" disabled>📥 <span data-i18n="adm.runImport">Import</span></button>
+                        </div>
+                        <div id="imp-report" class="stack" style="margin-top:16px" aria-live="polite"></div>
+                    </div>
+                    <div class="stack">
+                        <div class="panel">
+                            <h3 data-i18n="adm.templatesH">Templates</h3>
+                            <p class="small dim" data-i18n="adm.templatesP">Download a sample, fill it in and upload it. Both formats carry the same fields.</p>
+                            <div class="row"><button class="btn soft sm" type="button" id="tpl-json">⬇️ <span data-i18n="adm.tplJson">Sample JSON template</span></button>
+                            <button class="btn soft sm" type="button" id="tpl-csv">⬇️ <span data-i18n="adm.tplCsv">Sample CSV template</span></button></div>
+                            <hr>
+                            <h4 data-i18n="adm.fieldsH">Fields</h4>
+                            <p class="small dim" data-i18n-html="adm.fieldsP"></p>
+                        </div>
+                        <div class="panel">
+                            <h3 data-i18n="adm.starterH">Starter content</h3>
+                            <p class="small dim" data-i18n="adm.starterP">Load the bundled bilingual library (6 topics, 27 terms and 4 blog posts) into your database. Safe to run again — matching slugs are updated, not duplicated.</p>
+                            <button class="btn mint sm" type="button" id="starter-run">🌱 <span data-i18n="adm.starterRun">Load starter content</span></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section tab-panel" id="tab-users" hidden>
+                <h2 data-i18n="adm.tabUsers">Users</h2>
+                <p class="dim small" data-i18n="adm.usersP">Read-only list of registered accounts. Roles are changed with SQL in the Supabase dashboard.</p>
+                <div class="table-wrap"><table class="data"><thead><tr><th data-i18n="auth.username">Username</th><th data-i18n="auth.email">Email</th><th data-i18n="adm.colRole">Role</th><th data-i18n="adm.colJoined">Joined</th></tr></thead><tbody id="rows-users"></tbody></table></div>
+            </section>
+        </div>
+    </main>
+
+    <div class="modal" id="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+        <div class="modal-box wide">
+            <button class="icon-btn modal-close" type="button" data-close data-i18n-aria="common.close">✕</button>
+            <h2 id="edit-title"></h2>
+            <form id="edit-form" novalidate>
+                <div id="edit-fields"></div>
+                <p class="form-msg" id="edit-msg" role="status" aria-live="polite"></p>
+                <div class="row" style="justify-content:flex-end;margin-top:8px">
+                    <button class="btn ghost" type="button" data-close data-i18n="common.cancel">Cancel</button>
+                    <button class="btn" type="submit" id="edit-save" data-i18n="common.save">Save</button>
+                </div>
+            </form>
+        </div>
     </div>
 
+    <div class="modal" id="confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-text">
+        <div class="modal-box">
+            <h3 id="confirm-text"></h3>
+            <p class="small dim" id="confirm-sub"></p>
+            <div class="row" style="justify-content:flex-end;margin-top:18px">
+                <button class="btn ghost" type="button" id="confirm-no" data-i18n="common.cancel">Cancel</button>
+                <button class="btn danger" type="button" id="confirm-yes" data-i18n="common.delete">Delete</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
     <script src="script.js"></script>
-    <script>
-        document.getElementById('blogForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const title = document.getElementById('title').value;
-            const tag = document.getElementById('tag').value;
-            const content = document.getElementById('content').value;
-            const statusMessage = document.getElementById('statusMessage');
-
-            const currentDate = new Date().toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            });
-
-            const dummyAuthorId = "00000000-0000-0000-0000-000000000000"; 
-
-            const { data, error } = await _supabase
-                .from('articles')
-                .insert([
-                    { 
-                        title: title, 
-                        tag: tag,
-                        content: content, 
-                        date: currentDate,
-                        author_id: dummyAuthorId 
-                    }
-                ]);
-
-            if (error) {
-                console.error('Error occurred:', error);
-                statusMessage.style.color = 'var(--bad)';
-                statusMessage.textContent = 'Error: ' + error.message;
-            } else {
-                statusMessage.style.color = 'var(--ok)';
-                statusMessage.textContent = 'Article published successfully!';
-                document.getElementById('blogForm').reset();
-            }
-        });
-    </script>
+    <script src="js/admin.js"></script>
 </body>
 </html>

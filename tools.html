@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tools | SyntaxSec</title>
+    <meta name="description" content="Student security lab: Link Inspector, Hash and Encoding Playground, and a 2FA guide with a live TOTP simulator.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="tools" data-access="user" data-title="tools.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="tools.h1">Security lab tools</h1>
+                <p class="lead" data-i18n="tools.lead">Hands-on utilities for students. Everything on this page runs in your browser — nothing you type is uploaded.</p>
+            </section>
+
+            <div class="grid" style="margin-bottom:26px">
+                <a class="card tint-sun" href="password-checker.html"><div class="emoji">🔑</div><h3 data-i18n="nav.password"></h3><p class="dim small" data-i18n="tools.cPassword">Realistic strength audit, breach check and generator.</p><span class="go" data-i18n="tools.open">Open tool</span></a>
+                <a class="card tint-coral" href="phishing-checker.html"><div class="emoji">🎣</div><h3 data-i18n="nav.phishing"></h3><p class="dim small" data-i18n="tools.cPhishing">Analyse pasted email text or a screenshot for red flags.</p><span class="go" data-i18n="tools.open">Open tool</span></a>
+                <a class="card tint-mint" href="quiz.html"><div class="emoji">🕵️</div><h3 data-i18n="tools.cQuizH">Spot the Fake quiz</h3><p class="dim small" data-i18n="tools.cQuiz">Ten messages to judge: phishing or legit?</p><span class="go" data-i18n="tools.open">Open tool</span></a>
+            </div>
+
+            <div class="tabs" role="tablist" id="tool-tabs">
+                <button class="tab" type="button" role="tab" data-tab="link" aria-selected="true">🔗 <span data-i18n="nav.link"></span></button>
+                <button class="tab" type="button" role="tab" data-tab="hash" aria-selected="false">🧪 <span data-i18n="nav.hash"></span></button>
+                <button class="tab" type="button" role="tab" data-tab="totp" aria-selected="false">📱 <span data-i18n="nav.totp"></span></button>
+            </div>
+
+            <!-- Link Inspector -->
+            <section class="tab-panel section" id="panel-link">
+                <div class="panel">
+                    <h2 data-i18n="link.h">URL &amp; Link Inspector</h2>
+                    <p class="dim" data-i18n="link.p">Paste a link to see what it is really made of. The link is only parsed as text — it is never opened.</p>
+                    <div class="row">
+                        <input class="grow mono" id="link-input" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" data-i18n-ph="link.ph" data-i18n-aria="link.ph" placeholder="https://example.com/path?query=1" style="min-width:240px">
+                        <button class="btn" type="button" id="link-run" data-i18n="link.run">Inspect link</button>
+                    </div>
+                    <div class="row small" style="margin-top:10px"><span class="dim" data-i18n="link.try">Try an example:</span>
+                        <button class="chip" type="button" data-link-example="http://paypa1.com-account-verify.top/login?next=https://evil.example/collect">paypa1…</button>
+                        <button class="chip" type="button" data-link-example="https://www.google.com@203.0.113.7:8080/update.exe">user@IP</button>
+                        <button class="chip" type="button" data-link-example="https://xn--pypal-4ve.com/signin">punycode</button>
+                        <button class="chip" type="button" data-link-example="https://www.wikipedia.org/wiki/Phishing">wikipedia</button>
+                    </div>
+                    <div id="link-out" style="margin-top:20px" class="stack" aria-live="polite"></div>
+                </div>
+            </section>
+
+            <!-- Hash & Encoding Playground -->
+            <section class="tab-panel section" id="panel-hash" hidden>
+                <div class="panel">
+                    <h2 data-i18n="hash.h">Hash &amp; Encoding Playground</h2>
+                    <p class="dim" data-i18n="hash.p">Encoding is reversible and hides nothing. Hashing is one-way. Type below and watch both change live.</p>
+                    <div class="split">
+                        <div>
+                            <label for="hash-input" data-i18n="hash.input">Input text</label>
+                            <textarea id="hash-input" class="mono" spellcheck="false" data-i18n-ph="hash.ph" placeholder="Type or paste text…">Salam, SyntaxSec!</textarea>
+                            <div class="label" style="margin-top:14px" data-i18n="hash.op">Operation</div>
+                            <div class="chips" id="hash-ops">
+                                <button class="chip" type="button" data-op="b64e" aria-pressed="true">Base64 ▸ <span data-i18n="hash.encode">encode</span></button>
+                                <button class="chip" type="button" data-op="b64d" aria-pressed="false">Base64 ▸ <span data-i18n="hash.decode">decode</span></button>
+                                <button class="chip" type="button" data-op="urle" aria-pressed="false">URL ▸ <span data-i18n="hash.encode">encode</span></button>
+                                <button class="chip" type="button" data-op="urld" aria-pressed="false">URL ▸ <span data-i18n="hash.decode">decode</span></button>
+                                <button class="chip" type="button" data-op="hexe" aria-pressed="false">Hex ▸ <span data-i18n="hash.encode">encode</span></button>
+                                <button class="chip" type="button" data-op="hexd" aria-pressed="false">Hex ▸ <span data-i18n="hash.decode">decode</span></button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="label" data-i18n="hash.output">Result</div>
+                            <div class="out" id="hash-output" aria-live="polite"></div>
+                            <div class="row" style="margin-top:10px">
+                                <button class="btn sm ghost" type="button" id="hash-copy" data-i18n="common.copy">Copy</button>
+                                <button class="btn sm ghost" type="button" id="hash-swap" data-i18n="hash.swap">Use result as input</button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3 data-i18n="hash.hashesH">Hashes of the input</h3>
+                    <table class="kv">
+                        <tr><th>MD5 <span class="badge coral" data-i18n="hash.broken">broken</span></th><td id="h-md5"></td></tr>
+                        <tr><th>SHA-1 <span class="badge sun" data-i18n="hash.weak">weak</span></th><td id="h-sha1"></td></tr>
+                        <tr><th>SHA-256 <span class="badge mint" data-i18n="hash.ok">current</span></th><td id="h-sha256"></td></tr>
+                    </table>
+                    <p class="small dim" style="margin-top:12px" data-i18n="hash.note">Change one character and every hash changes completely — the avalanche effect. MD5 and SHA-1 are shown for study only; collisions are practical, so do not use them for security.</p>
+                </div>
+            </section>
+
+            <!-- 2FA guide & TOTP simulator -->
+            <section class="tab-panel section" id="panel-totp" hidden>
+                <div class="panel">
+                    <h2 data-i18n="totp.h">2FA / MFA visual guide</h2>
+                    <p class="dim" data-i18n="totp.p">A second factor means a stolen password is not enough. Not all second factors are equally strong.</p>
+                    <div class="compare">
+                        <div class="card"><span class="badge coral" data-i18n="totp.smsBadge">Weakest</span><h3 style="margin-top:10px">💬 <span data-i18n="totp.smsH">SMS codes</span></h3>
+                            <ul class="small"><li data-i18n="totp.sms1"></li><li data-i18n="totp.sms2"></li><li data-i18n="totp.sms3"></li><li data-i18n="totp.sms4"></li></ul></div>
+                        <div class="card"><span class="badge mint" data-i18n="totp.appBadge">Recommended</span><h3 style="margin-top:10px">📱 <span data-i18n="totp.appH">Authenticator app (TOTP)</span></h3>
+                            <ul class="small"><li data-i18n="totp.app1"></li><li data-i18n="totp.app2"></li><li data-i18n="totp.app3"></li><li data-i18n="totp.app4"></li></ul></div>
+                        <div class="card"><span class="badge" data-i18n="totp.keyBadge">Strongest</span><h3 style="margin-top:10px">🗝️ <span data-i18n="totp.keyH">Passkeys and security keys</span></h3>
+                            <ul class="small"><li data-i18n="totp.key1"></li><li data-i18n="totp.key2"></li><li data-i18n="totp.key3"></li></ul></div>
+                    </div>
+                    <hr>
+                    <h2 data-i18n="totp.simH">Live TOTP simulator</h2>
+                    <p class="dim" data-i18n="totp.simP">This is exactly what an authenticator app does: it mixes a shared secret with the current 30-second time window. No network is involved.</p>
+                    <div class="split">
+                        <div class="card totp">
+                            <div class="small dim" data-i18n="totp.current">Current code</div>
+                            <div class="code" id="totp-code" aria-live="polite">••• •••</div>
+                            <div class="ring" id="totp-ring"><span id="totp-left">30</span></div>
+                            <div class="small dim" data-i18n="totp.seconds">seconds until it changes</div>
+                            <div class="row" style="justify-content:center;margin-top:14px">
+                                <button class="btn sm ghost" type="button" id="totp-copy" data-i18n="common.copy">Copy</button>
+                                <button class="btn sm soft" type="button" id="totp-new" data-i18n="totp.newSecret">New random secret</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="field"><label for="totp-secret" data-i18n="totp.secret">Shared secret (Base32)</label>
+                                <input id="totp-secret" class="mono" type="text" autocomplete="off" spellcheck="false" value="JBSWY3DPEHPK3PXP">
+                                <div class="hint" data-i18n="totp.secretHint">The server shows this once as a QR code. Your phone and the server both keep it.</div></div>
+                            <table class="kv">
+                                <tr><th data-i18n="totp.rowTime">Unix time</th><td id="totp-time"></td></tr>
+                                <tr><th data-i18n="totp.rowCounter">Time step (time ÷ 30)</th><td id="totp-counter"></td></tr>
+                                <tr><th data-i18n="totp.rowHmac">HMAC-SHA1(secret, step)</th><td id="totp-hmac"></td></tr>
+                                <tr><th data-i18n="totp.rowTrunc">Truncate → 6 digits</th><td id="totp-trunc"></td></tr>
+                                <tr><th data-i18n="totp.rowUri">Setup link in the QR code</th><td id="totp-uri"></td></tr>
+                            </table>
+                            <div class="field" style="margin-top:16px"><label for="totp-try" data-i18n="totp.tryLabel">Play the server: type a code to verify it</label>
+                                <div class="row"><input id="totp-try" class="mono grow" type="text" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="000000" style="max-width:180px">
+                                <button class="btn sm" type="button" id="totp-verify" data-i18n="totp.verify">Verify code</button></div>
+                                <p class="form-msg" id="totp-result" aria-live="polite"></p></div>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3 data-i18n="totp.stepsH">Turn on 2FA for an account</h3>
+                    <ol class="prose">
+                        <li data-i18n="totp.step1"></li><li data-i18n="totp.step2"></li><li data-i18n="totp.step3"></li><li data-i18n="totp.step4"></li><li data-i18n="totp.step5"></li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/hash.js"></script>
+    <script src="js/urlkit.js"></script>
+    <script src="js/tools.js"></script>
+</body>
+</html>

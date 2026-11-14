@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Roadmaps | SyntaxSec</title>
+    <meta name="description" content="Structured beginner-to-advanced cybersecurity study tracks with saved progress.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="roadmaps" data-access="user" data-title="road.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="road.h1">Cybersecurity learning roadmaps</h1>
+                <p class="lead" data-i18n="road.lead">Three study tracks from beginner to advanced. Open a term, read it, mark it as mastered — your progress bar fills as you go.</p>
+            </section>
+            <div id="offline-note" class="notice" hidden style="margin-bottom:18px"><span>⚠️</span><span data-i18n="common.offline"></span></div>
+            <div id="tracks" class="stack"><div class="skeleton" style="min-height:160px"></div><div class="skeleton" style="min-height:160px"></div></div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/roadmaps.js"></script>
+</body>
+</html>
