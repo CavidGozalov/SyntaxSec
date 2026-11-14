@@ -1,7 +1,7 @@
 :root{--bg:#eef1f6;--card:#fff;--ink:#0f1a2b;--dim:#51607a;--line:#cfd6e4;--accent:#1f4fff;--on:#fff;--ok:#0a8a4a;--warn:#b86e00;--bad:#d1243a;--grid:rgba(31,79,255,.07)}
 [data-theme="dark"]{--bg:#0c1220;--card:#131b2e;--ink:#e6ebf5;--dim:#92a0bd;--line:#26324d;--accent:#7b99ff;--on:#0c1220;--ok:#3ddc8a;--warn:#ffb340;--bad:#ff6b7d;--grid:rgba(123,153,255,.08)}
 *{box-sizing:border-box}
-body{margin:0;color:var(--ink);background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/32px 32px,var(--bg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;color:var(--ink);background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/32px 32px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/32px 32px,var(--bg);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif; transition: background-color 0.3s, color 0.3s;}
 input.pw{font-family:ui-monospace,"Cascadia Code",Consolas,monospace}
 a{color:var(--accent)}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
@@ -30,7 +30,7 @@ input.pw:focus,input.s:focus{border-color:var(--accent);outline:0}
 .stat b{display:block;font-size:1.5rem}
 .stat span,.tag{color:var(--dim);font-size:.88rem}
 .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin:24px 0}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px; transition: background-color 0.3s, border-color 0.3s, color 0.3s;}
 .card h3{margin:0 0 6px}
 .card p{margin:0;color:var(--dim)}
 h2{margin:44px 0 8px;font-size:1.6rem}
@@ -45,37 +45,34 @@ ul.chk li.ok::before{content:"\2713";color:var(--ok)}
 footer{border-top:1px solid var(--line);background:var(--card);margin-top:56px;padding:24px 0;color:var(--dim);font-size:.9rem}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
-
-/* Blog Card Grid & Layout */
+/* Blog Card Grid & Layout (Sərt rənglər təmizləndi, dəyişənlərə bağlandı) */
 .card {
-    background: #1e293b !important;
-    border: 1px solid #334155;
+    background: var(--card);
+    border: 1px solid var(--line);
     border-radius: 12px;
     padding: 24px;
     margin-bottom: 24px;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    color: #f8fafc;
 }
 
 .card h3 {
     margin-top: 8px;
     margin-bottom: 12px;
-    color: #f1f5f9;
+    color: var(--ink);
     font-size: 20px;
 }
 
 .card p {
-    color: #cbd5e1;
+    color: var(--dim);
     line-height: 1.6;
     margin-bottom: 12px;
 }
 
-/* Tags */
 .card .tag {
     display: inline-block;
     padding: 4px 10px;
-    background: #312e81;
-    color: #818cf8;
+    background: var(--line);
+    color: var(--accent);
     border-radius: 6px;
     font-size: 11px;
     font-weight: 700;
@@ -87,95 +84,28 @@ footer{border-top:1px solid var(--line);background:var(--card);margin-top:56px;p
     display: block;
     margin-top: 12px;
     font-size: 12px;
-    color: #64748b;
+    color: var(--dim);
 }
 
-/* Reaction Buttons */
-.reaction-container, .comment-reactions {
-    margin-top: 16px;
-    display: flex;
-    gap: 10px;
-    align-items: center;
+/* Navbar Theme Düyməsi */
+.theme-nav-btn {
+    background: var(--bg) !important;
+    border: 1px solid var(--line) !important;
+    color: var(--ink) !important;
+    padding: 4px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-decoration: none !important;
+    transition: background 0.2s, border-color 0.2s, transform 0.1s !important;
+    margin-left: 8px;
 }
-
-.like-btn, .dislike-btn, .comment-like-btn, .comment-dislike-btn {
-    padding: 6px 12px;
-    cursor: pointer;
-    border: 1px solid #475569;
-    background: #0f172a;
-    color: #e2e8f0;
-    border-radius: 6px;
-    font-size: 13px;
-    transition: background 0.2s, border-color 0.2s;
-}
-
-.like-btn:hover, .dislike-btn:hover, .comment-like-btn:hover, .comment-dislike-btn:hover {
-    background: #334155;
-    border-color: #64748b;
-}
-
-/* Comments Section */
-.comments-section {
-    margin-top: 20px;
-    border-top: 1px solid #334155;
-    padding-top: 16px;
-}
-
-.comments-section h4 {
-    font-size: 15px;
-    color: #f1f5f9;
-    margin-bottom: 12px;
-}
-
-.comment-item {
-    background: #0f172a;
-    border: 1px solid #334155;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: #cbd5e1;
-}
-
-.comment-form {
-    margin-top: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.comment-form input, .comment-form textarea {
-    padding: 10px;
-    font-size: 13px;
-    background: #0f172a;
-    border: 1px solid #475569;
-    color: #f8fafc;
-    border-radius: 6px;
-    outline: none;
-}
-
-.comment-form input:focus, .comment-form textarea:focus {
-    border-color: #818cf8;
-}
-
-.comment-form textarea {
-    height: 70px;
-    resize: vertical;
-}
-
-.comment-submit-btn {
-    align-self: flex-start;
-    padding: 8px 16px;
-    background: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-    transition: background 0.2s;
-}
-
-.comment-submit-btn:hover {
-    background: #4338ca;
+.theme-nav-btn:hover {
+    border-color: var(--accent) !important;
+    background: var(--card) !important;
+    transform: translateY(-1px);
 }

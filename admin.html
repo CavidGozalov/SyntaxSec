@@ -4,22 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - New Blog Post</title>
-    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 50px; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h2 { margin-bottom: 20px; color: #333; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
-        input, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .container { max-width: 600px; margin: 50px auto; background: var(--card); padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid var(--line); }
+        h2 { margin-bottom: 20px; color: var(--ink); }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: var(--dim); }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid var(--line); border-radius: 4px; box-sizing: border-box; background: var(--bg); color: var(--ink); }
         textarea { height: 150px; resize: vertical; }
-        button { background-color: #4f46e5; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #4338ca; }
         #statusMessage { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>Admin Panel: Add New Post</h2>
         
@@ -33,15 +34,14 @@
             <label for="content">Content:</label>
             <textarea id="content" required placeholder="Write your article content here..."></textarea>
 
-            <button type="submit">Publish Post</button>
+            <button type="submit" class="btn">Publish Post</button>
         </form>
 
         <p id="statusMessage"></p>
     </div>
 
-    <!-- Supabase Connection File -->
     <script src="js/supabase.js"></script>
-
+    <script src="script.js"></script>
     <script>
         document.getElementById('blogForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -73,15 +73,14 @@
 
             if (error) {
                 console.error('Error occurred:', error);
-                statusMessage.style.color = 'red';
+                statusMessage.style.color = 'var(--bad)';
                 statusMessage.textContent = 'Error: ' + error.message;
             } else {
-                statusMessage.style.color = 'green';
+                statusMessage.style.color = 'var(--ok)';
                 statusMessage.textContent = 'Article published successfully!';
                 document.getElementById('blogForm').reset();
             }
         });
     </script>
-
 </body>
 </html>
