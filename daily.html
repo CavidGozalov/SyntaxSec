@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Question of the Day | SyntaxSec</title>
+    <meta name="description" content="One security question a day: keep your streak, collect items and browse the archive.">
+    <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
+    <script>
+        /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
+        (function () {
+            var d = document.documentElement;
+            try {
+                d.setAttribute('data-theme', localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+                d.lang = localStorage.getItem('lang') === 'az' ? 'az' : 'en';
+                d.classList.add('auth-pending');
+            } catch (e) { d.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<!-- data-access="public": signed-out visitors get a log-in prompt here instead of a redirect. -->
+<body data-page="daily" data-access="public" data-title="daily.title">
+    <main>
+        <div class="wrap">
+            <section class="page-head">
+                <h1 data-i18n="daily.h1">Question of the Day</h1>
+                <p class="lead" data-i18n="daily.lead">One security question a day. Answer it to keep your streak going and collect items.</p>
+            </section>
+
+            <!-- Signed-out state -->
+            <section class="panel center" id="daily-signin" hidden>
+                <div class="empty-emoji" aria-hidden="true">🔐</div>
+                <h2 data-i18n="daily.signinH">Log in to play</h2>
+                <p class="dim" data-i18n="daily.signinP">The question of the day, your streak and your rewards are saved to your account.</p>
+                <a class="btn" href="index.html?auth=login&amp;next=daily.html" data-i18n="auth.login">Log in</a>
+            </section>
+
+            <!-- Signed-in state -->
+            <div id="daily-app" hidden>
+                <div class="notice bad" id="daily-alert" role="alert" hidden style="margin-bottom:18px">
+                    <span aria-hidden="true">⚠️</span>
+                    <span class="grow" id="daily-alert-text"></span>
+                    <button class="btn ghost sm" type="button" id="daily-retry" data-i18n="daily.retry">Try again</button>
+                </div>
+                <div id="daily-loading"><div class="skeleton" style="min-height:220px"></div></div>
+
+                <div id="daily-content" hidden>
+                <div class="split">
+                    <section class="panel qotd" id="qotd" aria-live="polite"><div class="skeleton" style="min-height:260px"></div></section>
+
+                    <section class="panel" aria-labelledby="streak-h">
+                        <h2 id="streak-h" data-i18n="streak.h">Your streak</h2>
+                        <div class="stats streak-stats">
+                            <div class="stat"><b id="st-current">–</b><span data-i18n="streak.current">current streak (days)</span></div>
+                            <div class="stat"><b id="st-longest">–</b><span data-i18n="streak.longest">longest streak (days)</span></div>
+                            <div class="stat"><b id="st-restores">–</b><span data-i18n="streak.restores">restores left this month</span></div>
+                        </div>
+                        <div class="notice info" id="restore-box" hidden style="margin-top:14px">
+                            <span aria-hidden="true">🧯</span>
+                            <div class="grow">
+                                <p id="restore-text" style="margin:0 0 10px"></p>
+                                <button class="btn sm" type="button" id="restore-btn" data-i18n="streak.restoreBtn">Restore streak</button>
+                            </div>
+                        </div>
+                        <p class="small dim" id="streak-rules" style="margin:14px 0 0"></p>
+                        <p class="small dim" id="streak-rules-restore" style="margin:4px 0 0"></p>
+                    </section>
+                </div>
+
+                <section class="section" id="archive" aria-labelledby="arch-h">
+                    <h2 id="arch-h" data-i18n="arch.h">Archive</h2>
+                    <p class="dim"><span data-i18n="arch.p">Missed a day? Open a past question.</span> <span data-i18n="daily.archiveNote">Archive answers do not change your streak and give one common item.</span></p>
+                    <form class="arch-pick" id="arch-form">
+                        <div>
+                            <label for="arch-date" data-i18n="arch.pick">Pick a date</label>
+                            <input class="input" type="date" id="arch-date" required>
+                        </div>
+                        <button class="btn soft" type="submit" data-i18n="arch.open">Open</button>
+                    </form>
+                    <div class="chips" id="arch-list" style="margin-top:14px"></div>
+                    <section class="panel qotd" id="arch-q" aria-live="polite" hidden style="margin-top:18px"></section>
+                </section>
+
+                <section class="section" id="inventory" aria-labelledby="inv-h">
+                    <div class="row between">
+                        <h2 id="inv-h" style="margin:0" data-i18n="inv.h">Inventory</h2>
+                        <span class="badge plain" id="inv-total"></span>
+                    </div>
+                    <div id="inv-list" style="margin-top:16px"><div class="skeleton"></div></div>
+                </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal" id="restore-modal" role="alertdialog" aria-modal="true" aria-labelledby="restore-confirm-h" aria-describedby="restore-confirm-p">
+        <div class="modal-box">
+            <h3 id="restore-confirm-h" data-i18n="streak.confirmH">Restore your streak?</h3>
+            <p class="small dim" id="restore-confirm-p"></p>
+            <div class="row" style="justify-content:flex-end;margin-top:18px">
+                <button class="btn ghost" type="button" id="restore-no" data-i18n="common.cancel">Cancel</button>
+                <button class="btn" type="button" id="restore-yes" data-i18n="streak.restoreBtn">Restore streak</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="script.js"></script>
+    <script src="js/progress.js"></script>
+    <script src="js/daily.js"></script>
+</body>
+</html>

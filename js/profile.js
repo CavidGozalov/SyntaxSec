@@ -1,6 +1,8 @@
-/* SyntaxSec — profile.html: account details and the preset avatar picker.
-   The choice is stored in profiles.avatar_key (see sql/phase1_account_basics.sql);
-   the list of valid keys is SS.AVATAR_KEYS in js/auth.js. */
+/* SyntaxSec — profile.html: account details, the preset avatar picker and the title picker.
+   The avatar is stored in profiles.avatar_key (see sql/phase1_account_basics.sql);
+   the list of valid keys is SS.AVATAR_KEYS in js/auth.js.
+   The title is stored in profiles.selected_title_id and can only be changed through the
+   set_selected_title database function, which rejects locked titles (js/progress.js). */
 (function () {
   "use strict";
   var SS = window.SS;
@@ -56,7 +58,66 @@
     }).join("");
     save.disabled = selected === SS.auth.avatarKey();
     if (msgState) msg.textContent = SS.t(msgState.key);
+    renderTitles();
   }
+
+  /* ---------- title picker ---------- */
+  var titleList = document.getElementById("title-list");
+  var titleMsg = document.getElementById("title-msg");
+  var titles = { rows: null, errorKey: null, busy: false, msg: null };   /* msg: { key, kind } */
+
+  function renderTitles() {
+    var current = SS.auth.title(), shown = document.getElementById("profile-title");
+    shown.hidden = !current;
+    shown.firstElementChild.textContent = current ? SS.L(current, "name") : "";
+    titleMsg.textContent = titles.msg ? SS.t(titles.msg.key) : "";
+    titleMsg.className = "form-msg" + (titles.msg && titles.msg.kind ? " " + titles.msg.kind : "");
+    if (!titles.rows) {
+      titleList.innerHTML = titles.errorKey
+        ? '<div class="notice bad"><span aria-hidden="true">⚠️</span><span class="grow">' + SS.esc(SS.t(titles.errorKey)) + "</span>" +
+          '<button class="btn ghost sm" type="button" data-title-retry>' + SS.esc(SS.t("daily.retry")) + "</button></div>"
+        : '<div class="skeleton"></div>';
+      return;
+    }
+    var selectedId = current ? current.id : null;
+    var rows = [{ id: null, unlocked: true }].concat(titles.rows);
+    titleList.innerHTML = rows.map(function (row) {
+      var on = row.id === selectedId;
+      var name = row.id === null ? SS.t("title.none") : SS.L(row, "name");
+      var sub = row.id === null ? "" : SS.daily.titleRequirement(row) + (row.unlocked ? "" : " · " + SS.t("title.locked"));
+      return '<button class="title-opt" type="button" role="radio" aria-checked="' + on + '" data-title="' + (row.id === null ? "" : row.id) + '"' +
+        (row.unlocked && !titles.busy ? "" : " disabled") + '><span class="grow"><b>' + SS.esc(name) + "</b>" +
+        (sub ? "<span>" + SS.esc(sub) + "</span>" : "") + '</span><span class="state" aria-hidden="true">' + (on ? "✓" : row.unlocked ? "" : "🔒") + "</span></button>";
+    }).join("");
+  }
+
+  async function loadTitles() {
+    titles.errorKey = null;
+    try {
+      var progress = await SS.daily.progress();
+      titles.rows = progress.titles || [];
+      SS.daily.applyProgress(progress);
+    } catch (err) { console.error(err); titles.rows = null; titles.errorKey = SS.daily.errorKey(err); }
+    renderTitles();
+  }
+
+  titleList.addEventListener("click", async function (e) {
+    if (e.target.closest("[data-title-retry]")) { titles.errorKey = null; renderTitles(); loadTitles(); return; }
+    var opt = e.target.closest("[data-title]");
+    if (!opt || opt.disabled || titles.busy || opt.getAttribute("aria-checked") === "true") return;
+    var raw = opt.getAttribute("data-title"), id = raw === "" ? null : Number(raw);
+    titles.busy = true; titles.msg = { key: "title.saving" }; renderTitles();
+    try {
+      await SS.daily.setTitle(id);
+      SS.renderNav();
+      titles.msg = { key: "title.saved", kind: "ok" };
+    } catch (err) {
+      console.error(err);
+      titles.msg = { key: SS.daily.errorKey(err), kind: "bad" };
+    }
+    titles.busy = false; renderTitles();
+    var checked = titleList.querySelector('[aria-checked="true"]'); if (checked) checked.focus();
+  });
 
   function pick(key, focus) {
     selected = key || null;
@@ -100,5 +161,6 @@
     if (!SS.auth.user) return;
     selected = SS.auth.avatarKey();
     render();
+    loadTitles();
   });
 })();

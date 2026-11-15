@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Profile | SyntaxSec</title>
-    <meta name="description" content="Your SyntaxSec profile: account details and avatar.">
+    <meta name="description" content="Your SyntaxSec profile: account details, avatar and title.">
     <link rel="icon" type="image/svg+xml" href="assets/icons/logo.svg">
     <script>
         /* Apply the saved theme and language before first paint (no flash, no reload needed later). */
@@ -36,6 +36,7 @@
                     <div>
                         <h2 id="profile-name">…</h2>
                         <p class="dim small" id="profile-email"></p>
+                        <p class="profile-title" id="profile-title" hidden><span class="badge"></span></p>
                     </div>
                 </div>
 
@@ -47,6 +48,13 @@
                 </div>
                 <p class="form-msg" id="avatar-msg" role="status" aria-live="polite"></p>
             </section>
+
+            <section class="panel" aria-labelledby="title-label" style="margin-top:22px">
+                <h3 id="title-label" data-i18n="title.h">Title</h3>
+                <p class="dim small" data-i18n="title.p">Titles unlock as you answer questions and keep streaks. Choose one to show next to your name.</p>
+                <div class="title-list" id="title-list" role="radiogroup" aria-labelledby="title-label"><div class="skeleton"></div></div>
+                <p class="form-msg" id="title-msg" role="status" aria-live="polite"></p>
+            </section>
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -55,6 +63,7 @@
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
     <script src="script.js"></script>
+    <script src="js/progress.js"></script>
     <script src="js/profile.js"></script>
 </body>
 </html>
