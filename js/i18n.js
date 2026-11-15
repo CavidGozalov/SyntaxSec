@@ -83,6 +83,7 @@
       "nav.quiz": "Quiz", "nav.blog": "Blog", "nav.admin": "Admin", "nav.login": "Log in", "nav.logout": "Log out",
       "nav.start": "Get started", "nav.menu": "Menu", "nav.theme": "Switch between light and dark theme",
       "nav.lang": "Switch language", "nav.account": "Signed in as {name}",
+      "nav.profile": "Profile", "nav.profileOf": "Open profile ({name})",
       "foot.note": "SyntaxSec — an interactive cybersecurity and IT learning platform. Password, link and email checks run in your browser.",
       "foot.made": "University PBL project",
 
@@ -93,6 +94,8 @@
       "auth.username": "Username", "auth.email": "Email", "auth.password": "Password",
       "auth.userHint": "3–24 characters: letters, numbers, dot, dash or underscore.",
       "auth.pwHint": "At least 8 characters.",
+      "auth.confirm": "Confirm password", "auth.showPw": "Show password", "auth.hidePw": "Hide password",
+      "auth.errMismatch": "The passwords do not match.",
       "auth.submitLogin": "Log in", "auth.submitRegister": "Create account",
       "auth.working": "One moment…",
       "auth.confirmSent": "Account created. Open the confirmation link we emailed to {email}, then log in.",
@@ -130,6 +133,7 @@
       "nav.quiz": "Viktorina", "nav.blog": "Bloq", "nav.admin": "Admin", "nav.login": "Daxil ol", "nav.logout": "Çıxış",
       "nav.start": "Başla", "nav.menu": "Menyu", "nav.theme": "İşıqlı və qaranlıq mövzu arasında keç",
       "nav.lang": "Dili dəyiş", "nav.account": "{name} kimi daxil olmusunuz",
+      "nav.profile": "Profil", "nav.profileOf": "Profili aç ({name})",
       "foot.note": "SyntaxSec — kibertəhlükəsizlik və İT üzrə interaktiv öyrənmə platforması. Parol, keçid və məktub yoxlamaları brauzerinizdə işləyir.",
       "foot.made": "Universitet PBL layihəsi",
 
@@ -140,6 +144,8 @@
       "auth.username": "İstifadəçi adı", "auth.email": "E-poçt", "auth.password": "Parol",
       "auth.userHint": "3–24 simvol: hərf, rəqəm, nöqtə, tire və ya alt xətt.",
       "auth.pwHint": "Ən azı 8 simvol.",
+      "auth.confirm": "Parolu təsdiqləyin", "auth.showPw": "Parolu göstər", "auth.hidePw": "Parolu gizlət",
+      "auth.errMismatch": "Parollar uyğun gəlmir.",
       "auth.submitLogin": "Daxil ol", "auth.submitRegister": "Hesab yarat",
       "auth.working": "Bir an…",
       "auth.confirmSent": "Hesab yaradıldı. {email} ünvanına göndərdiyimiz təsdiq keçidini açın, sonra daxil olun.",

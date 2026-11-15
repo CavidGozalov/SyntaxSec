@@ -175,7 +175,13 @@ header.nav {
 #theme-toggle.spin .glyph { transform: rotate(360deg) scale(1.15); }
 #lang-toggle { width: auto; min-width: 46px; padding: 0 10px; letter-spacing: .04em; }
 .user-chip { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px 4px 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); font-weight: 600; font-size: .88rem; max-width: 170px; }
-.user-chip .avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--mint)); color: #fff; font: 700 .8rem var(--font-head); flex: none; }
+a.user-chip { color: var(--ink); text-decoration: none; transition: border-color .2s, box-shadow .2s; }
+a.user-chip:hover, a.user-chip[aria-current="page"] { border-color: var(--primary); box-shadow: var(--shadow); }
+.avatar { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, var(--primary), var(--mint)); color: #fff; font: 700 .8rem var(--font-head); flex: none; overflow: hidden; }
+.avatar.has-img { background: none; }
+.avatar img { width: 100%; height: 100%; display: block; }
+.avatar.xl { width: 84px; height: 84px; font-size: 2rem; }
+.nav-link.show-xs { display: none; }
 .user-chip .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-burger { display: none; }
 @media (max-width: 1020px) {
@@ -275,6 +281,29 @@ input[type="checkbox"] { accent-color: var(--primary); width: 17px; height: 17px
 @media (max-width: 720px) { .form-grid { grid-template-columns: 1fr; } }
 .form-msg { font-size: .9rem; font-weight: 600; min-height: 1.4em; margin: 8px 0 0; }
 .form-msg.ok { color: var(--ok); } .form-msg.bad { color: var(--bad); }
+.field-error { color: var(--bad); font-size: .82rem; font-weight: 600; margin-top: 5px; }
+.field-error:empty { display: none; }
+input[aria-invalid="true"] { border-color: var(--bad); }
+input[aria-invalid="true"]:focus { box-shadow: 0 0 0 4px color-mix(in srgb, var(--bad) 20%, transparent); }
+
+/* Password field with a show / hide (eye) button */
+.pw-wrap { position: relative; }
+.pw-wrap input { padding-right: 48px; }
+.pw-toggle { position: absolute; top: 50%; right: 5px; transform: translateY(-50%); width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 9px; background: none; color: var(--dim); cursor: pointer; transition: color .18s, background-color .18s; }
+.pw-toggle:hover { color: var(--ink); background: var(--surface-2); }
+.pw-toggle[aria-pressed="true"] { color: var(--primary); }
+.pw-toggle .eye-off, .pw-toggle[aria-pressed="true"] .eye-on { display: none; }
+.pw-toggle[aria-pressed="true"] .eye-off { display: block; }
+
+/* ---------- profile ---------- */
+.profile-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
+.profile-head h2 { margin: 0; overflow-wrap: anywhere; }
+.profile-head p { margin: 2px 0 0; overflow-wrap: anywhere; }
+.avatar-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)); margin: 12px 0 18px; }
+.avatar-opt { display: grid; place-items: center; aspect-ratio: 1; padding: 6px; background: var(--surface-2); border: 2px solid var(--line); border-radius: var(--radius); cursor: pointer; transition: transform .18s var(--ease), border-color .18s, box-shadow .18s, background-color .18s; }
+.avatar-opt:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: var(--shadow); }
+.avatar-opt[aria-checked="true"] { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent); }
+.avatar-opt .avatar { width: 100%; height: 100%; max-width: 56px; max-height: 56px; font-size: 1.3rem; }
 
 .search { position: relative; }
 .search input { padding: 15px 18px 15px 50px; font-size: 1.05rem; border-radius: 16px; box-shadow: var(--shadow); border-color: var(--line); }
@@ -503,6 +532,7 @@ footer.foot a { color: var(--dim); text-decoration: none; margin-left: 14px; } f
 .nav .btn { white-space: nowrap; }
 @media (max-width: 560px) {
   .user-chip, .hide-xs, .topic-head .mini-progress { display: none; }
+  .nav-link.show-xs { display: inline-flex; }
   .brand { font-size: 1.02rem; margin-right: auto; gap: 7px; }
   .brand img { width: 26px; height: 26px; }
   .nav .wrap { padding: 0 14px; }

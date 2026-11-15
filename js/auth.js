@@ -10,6 +10,11 @@
      (dashboard progress and admin still need an account). */
   SS.REQUIRE_LOGIN = true;
 
+  /* Preset avatar keys: the single source of truth in the JS.
+     Each key maps to assets/avatars/<key>.svg and must match the check
+     constraint in sql/phase1_account_basics.sql (profiles.avatar_key). */
+  SS.AVATAR_KEYS = ["shield", "lock", "key", "terminal", "fingerprint", "robot", "bug", "eye", "firewall", "chip", "radar", "wifi"];
+
   var HOME = "dashboard.html";
   var GATE = "index.html";
   var access = (document.body && document.body.getAttribute("data-access")) || "public";
@@ -37,12 +42,32 @@
       return auth.user && auth.user.email ? auth.user.email.split("@")[0] : "";
     },
 
+    /* The chosen preset avatar, or null to fall back to the user's initial. */
+    avatarKey: function () {
+      var key = auth.profile && auth.profile.avatar_key;
+      return key && SS.AVATAR_KEYS.indexOf(key) !== -1 ? key : null;
+    },
+
     loadProfile: async function () {
       if (!sb || !auth.user) { auth.profile = null; return null; }
       try {
-        var res = await sb.from("profiles").select("id, username, email, role, created_at").eq("id", auth.user.id).maybeSingle();
+        var res = await sb.from("profiles").select("id, username, email, role, created_at, avatar_key").eq("id", auth.user.id).maybeSingle();
+        /* Until sql/phase1_account_basics.sql has been run the avatar_key column
+           does not exist; fall back to the original column list. */
+        if (res.error) res = await sb.from("profiles").select("id, username, email, role, created_at").eq("id", auth.user.id).maybeSingle();
         auth.profile = res.error ? null : res.data;
       } catch (e) { auth.profile = null; }
+      return auth.profile;
+    },
+
+    /* Save a preset avatar key (or null for the initial) to profiles.avatar_key. */
+    saveAvatar: async function (key) {
+      if (!sb || !auth.user) throw new Error("offline");
+      if (key !== null && SS.AVATAR_KEYS.indexOf(key) === -1) throw new Error("invalid avatar");
+      var res = await sb.from("profiles").update({ avatar_key: key }).eq("id", auth.user.id).select("avatar_key").maybeSingle();
+      if (res.error) throw res.error;
+      if (!res.data) throw new Error("profile not found");
+      auth.profile = Object.assign({}, auth.profile, { avatar_key: res.data.avatar_key });
       return auth.profile;
     },
 
@@ -139,6 +164,37 @@
     var msg = document.getElementById("auth-msg");
     var userField = document.getElementById("auth-username-field");
     var submit = document.getElementById("auth-submit");
+    var pwInput = document.getElementById("auth-password");
+    var confirmInput = document.getElementById("auth-confirm");
+    var confirmField = document.getElementById("auth-confirm-field");
+
+    /* Inline error under a field; an empty key clears it. The key is kept on the
+       element so the message follows a language switch. */
+    function fieldError(input, key) {
+      var box = document.getElementById(input.id + "-err");
+      if (key) { box.setAttribute("data-i18n", key); box.textContent = SS.t(key); input.setAttribute("aria-invalid", "true"); }
+      else { box.removeAttribute("data-i18n"); box.textContent = ""; input.removeAttribute("aria-invalid"); }
+    }
+    function clearFieldErrors() { fieldError(pwInput, ""); fieldError(confirmInput, ""); }
+
+    /* Show / hide password: flips the input type and keeps aria-label and aria-pressed in sync. */
+    function setPwVisible(btn, visible) {
+      var input = document.getElementById(btn.getAttribute("data-pw-toggle"));
+      var key = visible ? "auth.hidePw" : "auth.showPw";
+      input.type = visible ? "text" : "password";
+      btn.setAttribute("aria-pressed", String(visible));
+      btn.setAttribute("data-i18n-aria", key);
+      btn.setAttribute("aria-label", SS.t(key));
+    }
+    function hidePasswords() { modal.querySelectorAll("[data-pw-toggle]").forEach(function (b) { setPwVisible(b, false); }); }
+
+    /* Live check while typing: only complain once the confirm field has content. */
+    function checkMatch() {
+      if (mode !== "register" || !confirmInput.value) return fieldError(confirmInput, "");
+      fieldError(confirmInput, confirmInput.value === pwInput.value ? "" : "auth.errMismatch");
+    }
+    pwInput.addEventListener("input", function () { fieldError(pwInput, ""); checkMatch(); });
+    confirmInput.addEventListener("input", checkMatch);
 
     function setMode(next) {
       mode = next === "login" ? "login" : "register";
@@ -152,6 +208,11 @@
       submit.setAttribute("data-i18n", mode === "login" ? "auth.submitLogin" : "auth.submitRegister");
       document.getElementById("auth-password").setAttribute("autocomplete", mode === "login" ? "current-password" : "new-password");
       document.getElementById("auth-pw-hint").hidden = mode === "login";
+      confirmField.hidden = mode === "login";
+      confirmInput.required = mode === "register";
+      if (mode === "login") confirmInput.value = "";
+      clearFieldErrors();
+      hidePasswords();
       say("");
       SS.applyI18n(modal);
     }
@@ -162,9 +223,11 @@
       modal.classList.add("open");
       setTimeout(function () { document.getElementById(mode === "login" ? "auth-email" : "auth-username").focus(); }, 60);
     };
-    function close() { modal.classList.remove("open"); }
+    function close() { modal.classList.remove("open"); hidePasswords(); }
 
     modal.addEventListener("click", function (e) {
+      var eye = e.target.closest("[data-pw-toggle]");
+      if (eye) { setPwVisible(eye, eye.getAttribute("aria-pressed") !== "true"); return; }
       if (e.target === modal || e.target.closest("[data-close]")) close();
       var tab = e.target.closest("[data-auth-tab]");
       if (tab) setMode(tab.getAttribute("data-auth-tab"));
@@ -181,7 +244,9 @@
       var email = document.getElementById("auth-email").value.trim();
       var password = document.getElementById("auth-password").value;
       if (mode === "register" && !/^[A-Za-z0-9._\-ƏəÖöĞğŞşÇçÜüİı]{3,24}$/.test(username)) return say(SS.t("auth.errUsernameFormat"), "bad");
-      if (mode === "register" && password.length < 8) return say(SS.t("auth.errWeak"), "bad");
+      clearFieldErrors();
+      if (mode === "register" && password.length < 8) { say(""); fieldError(pwInput, "auth.errWeak"); pwInput.focus(); return; }
+      if (mode === "register" && confirmInput.value !== password) { say(""); fieldError(confirmInput, "auth.errMismatch"); confirmInput.focus(); return; }
       submit.disabled = true; say(SS.t("auth.working"));
       try {
         if (mode === "login") {
@@ -190,7 +255,7 @@
         } else {
           var data = await auth.signUp(username, email, password);
           if (data.session) location.href = safeNext();
-          else { say(SS.t("auth.confirmSent", { email: email }), "ok"); form.reset(); }
+          else { say(SS.t("auth.confirmSent", { email: email }), "ok"); form.reset(); clearFieldErrors(); hidePasswords(); }
         }
       } catch (err) {
         var k = auth.errorKey(err);
