@@ -235,6 +235,15 @@
     }
   });
 
+  /* Avatar markup: the chosen preset (assets/avatars/<key>.svg) or the name's initial. */
+  SS.avatarHtml = function (key, name, extraClass) {
+    var cls = "avatar" + (extraClass ? " " + extraClass : "");
+    if (key && SS.AVATAR_KEYS.indexOf(key) !== -1) {
+      return '<span class="' + cls + ' has-img" aria-hidden="true"><img src="assets/avatars/' + key + '.svg" alt="" width="64" height="64"></span>';
+    }
+    return '<span class="' + cls + '" aria-hidden="true">' + SS.esc(String(name || "?").charAt(0).toLocaleUpperCase()) + "</span>";
+  };
+
   /* ------------------------------------------------------------------ shell */
   var LINKS = [
     { href: "dashboard.html", key: "nav.home", page: "dashboard" },
@@ -270,11 +279,14 @@
     var user = SS.auth.user;
     var inner = page !== "home" && (user || !SS.REQUIRE_LOGIN);
     var links = inner ? LINKS.map(linkHtml).join("") : "";
+    /* On phones the account chip is hidden, so the menu carries the profile link. */
+    if (inner && user) links += '<a class="nav-link show-xs" href="profile.html"' + (page === "profile" ? ' aria-current="page"' : "") + ' data-i18n="nav.profile"></a>';
     if (inner && SS.auth.isAdmin()) links += '<a class="nav-link" href="admin.html"' + (page === "admin" ? ' aria-current="page"' : "") + ' data-i18n="nav.admin"></a>';
     var account;
     if (user) {
       var name = SS.auth.displayName();
-      account = '<span class="user-chip" title="' + SS.esc(SS.t("nav.account", { name: name })) + '"><span class="avatar" aria-hidden="true">' + SS.esc(name.charAt(0).toLocaleUpperCase()) + '</span><span class="name">' + SS.esc(name) + "</span></span>" +
+      account = '<a class="user-chip" href="profile.html"' + (page === "profile" ? ' aria-current="page"' : "") + ' title="' + SS.esc(SS.t("nav.account", { name: name })) + '" aria-label="' + SS.esc(SS.t("nav.profileOf", { name: name })) + '">' +
+        SS.avatarHtml(SS.auth.avatarKey(), name) + '<span class="name">' + SS.esc(name) + "</span></a>" +
         '<button class="btn ghost sm" type="button" id="logout-btn" data-i18n="nav.logout"></button>';
     } else if (page === "home") {
       account = '<button class="btn ghost sm hide-xs" type="button" data-open-auth="login" data-i18n="nav.login"></button>' +
@@ -302,6 +314,7 @@
   }
   document.body.prepend(nav);
   renderNav();
+  SS.renderNav = renderNav;
 
   var foot = document.createElement("footer");
   foot.className = "foot no-print";
