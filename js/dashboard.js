@@ -1,4 +1,5 @@
-/* SyntaxSec — dashboard.html: daily term, quick tips, stats, roadmap progress, bookmarks. */
+/* SyntaxSec — dashboard.html: daily term, quick tips, question-of-the-day summary
+   (streak + restores, via js/progress.js), stats, roadmap progress, bookmarks. */
 (function () {
   "use strict";
   var SS = window.SS;
@@ -60,12 +61,36 @@
 
   function paintTip() { document.getElementById("tip-text").textContent = SS.t("tip." + tipIndex); }
 
+  /* Question of the Day card: streak numbers come from the database (get_daily_progress). */
+  var daily = { progress: null, errorKey: null };
+  function paintDaily() {
+    var p = daily.progress, msg = document.getElementById("qc-msg"), status = document.getElementById("qc-status"), cta = document.getElementById("qc-cta");
+    msg.textContent = daily.errorKey ? SS.t(daily.errorKey) : (p && p.can_restore ? SS.t("daily.cardRestore") : "");
+    msg.className = "form-msg" + (daily.errorKey ? " bad" : "");
+    status.hidden = !p;
+    if (!p) return;
+    document.getElementById("qc-current").textContent = p.current_streak + (p.current_streak > 0 ? " 🔥" : "");
+    document.getElementById("qc-longest").textContent = p.longest_streak;
+    document.getElementById("qc-restores").textContent = p.restores_remaining + " / " + p.restores_per_month;
+    status.textContent = SS.t(p.answered_today ? "daily.cardDone" : "daily.cardTodo");
+    status.className = "badge " + (p.answered_today ? "mint" : "sun");
+    cta.setAttribute("data-i18n", p.answered_today ? "daily.cardView" : "daily.cardCta");
+    cta.textContent = SS.t(cta.getAttribute("data-i18n"));
+    cta.className = p.answered_today ? "btn soft" : "btn";
+  }
+  async function loadDaily() {
+    try { daily.progress = await SS.daily.progress(); daily.errorKey = null; SS.daily.applyProgress(daily.progress); }
+    catch (err) { console.error(err); daily.progress = null; daily.errorKey = SS.daily.errorKey(err); }
+    paintDaily();
+  }
+
   function render() {
     var name = SS.auth.displayName();
     document.getElementById("hello").removeAttribute("data-i18n");
     document.getElementById("hello").textContent = name ? SS.t("dash.helloName", { name: name }) : SS.t("dash.hello");
     document.getElementById("offline-note").hidden = !SS.db.offline;
     paintTip();
+    paintDaily();
 
     /* Term of the day: the same term for everyone on a given date. */
     var title = document.getElementById("daily-title"), summary = document.getElementById("daily-summary"), link = document.getElementById("daily-link");
@@ -120,6 +145,7 @@
   document.addEventListener("langchange", render);
 
   SS.auth.ready.then(async function () {
+    if (SS.auth.user) loadDaily();   /* independent of the library content below */
     var content = await SS.db.content();
     state.topics = content.topics; state.terms = content.terms;
     state.progress = await SS.db.progress();

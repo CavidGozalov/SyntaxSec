@@ -15,6 +15,25 @@
      constraint in sql/phase1_account_basics.sql (profiles.avatar_key). */
   SS.AVATAR_KEYS = ["shield", "lock", "key", "terminal", "fingerprint", "robot", "bug", "eye", "firewall", "chip", "radar", "wifi"];
 
+  /* Phase 2 database names: the one place the JS spells them.
+     They must match sql/phase2_daily_progression.sql exactly. */
+  SS.DAILY_DB = {
+    fn: {
+      question: "get_daily_question", submit: "submit_daily_answer",
+      past: "get_past_question", submitPast: "submit_past_answer",
+      archive: "get_daily_archive", progress: "get_daily_progress",
+      restore: "restore_streak", setTitle: "set_selected_title"
+    },
+    arg: { choice: "p_choice", questionId: "p_question_id", date: "p_date", titleId: "p_title_id" },
+    table: { inventory: "user_inventory", items: "reward_items", titles: "titles" },
+    col: {
+      selectedTitle: "selected_title_id",
+      inventory: "item_id, obtained_at", inventoryItem: "item_id", inventoryUser: "user_id",
+      items: "id, name_en, name_az, type, rarity, icon",
+      titles: "id, name_en, name_az"
+    }
+  };
+
   var HOME = "dashboard.html";
   var GATE = "index.html";
   var access = (document.body && document.body.getAttribute("data-access")) || "public";
@@ -35,6 +54,7 @@
   var auth = (SS.auth = {
     user: null,
     profile: null,
+    titles: [],   /* id + names of every title, for the label next to the username */
     isAdmin: function () { return !!(auth.profile && auth.profile.role === "admin"); },
     displayName: function () {
       if (auth.profile && auth.profile.username) return auth.profile.username;
@@ -48,13 +68,34 @@
       return key && SS.AVATAR_KEYS.indexOf(key) !== -1 ? key : null;
     },
 
+    /* The title the user chose to show (a row from the titles table), or null. */
+    title: function () {
+      var id = auth.profile && auth.profile[SS.DAILY_DB.col.selectedTitle];
+      if (id === null || id === undefined) return null;
+      return auth.titles.filter(function (t) { return t.id === id; })[0] || null;
+    },
+    /* Local copy only: the database value is changed by the set_selected_title function. */
+    setSelectedTitle: function (id) {
+      var patch = {}; patch[SS.DAILY_DB.col.selectedTitle] = id === undefined ? null : id;
+      if (auth.profile) auth.profile = Object.assign({}, auth.profile, patch);
+    },
+
     loadProfile: async function () {
       if (!sb || !auth.user) { auth.profile = null; return null; }
+      var D = SS.DAILY_DB, base = "id, username, email, role, created_at";
       try {
-        var res = await sb.from("profiles").select("id, username, email, role, created_at, avatar_key").eq("id", auth.user.id).maybeSingle();
-        /* Until sql/phase1_account_basics.sql has been run the avatar_key column
-           does not exist; fall back to the original column list. */
-        if (res.error) res = await sb.from("profiles").select("id, username, email, role, created_at").eq("id", auth.user.id).maybeSingle();
+        /* The title names load in parallel so they do not delay the page. */
+        var both = await Promise.all([
+          sb.from("profiles").select(base + ", avatar_key, " + D.col.selectedTitle).eq("id", auth.user.id).maybeSingle(),
+          sb.from(D.table.titles).select(D.col.titles)
+        ]);
+        var res = both[0];
+        auth.titles = both[1].error ? [] : (both[1].data || []);
+        /* Until sql/phase2_daily_progression.sql has been run the selected_title_id
+           column does not exist; until sql/phase1_account_basics.sql has been run
+           avatar_key does not exist either. Fall back one step at a time. */
+        if (res.error) res = await sb.from("profiles").select(base + ", avatar_key").eq("id", auth.user.id).maybeSingle();
+        if (res.error) res = await sb.from("profiles").select(base).eq("id", auth.user.id).maybeSingle();
         auth.profile = res.error ? null : res.data;
       } catch (e) { auth.profile = null; }
       return auth.profile;

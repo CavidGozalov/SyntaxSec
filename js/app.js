@@ -257,6 +257,7 @@
       { href: "tools.html#totp", key: "nav.totp", ico: "📱" },
       { href: "tools.html", key: "nav.alltools", ico: "🧰", page: "tools" }
     ] },
+    { href: "daily.html", key: "nav.daily", page: "daily" },
     { href: "quiz.html", key: "nav.quiz", page: "quiz" },
     { href: "blog.html", key: "nav.blog", page: "blog" }
   ];
@@ -284,9 +285,10 @@
     if (inner && SS.auth.isAdmin()) links += '<a class="nav-link" href="admin.html"' + (page === "admin" ? ' aria-current="page"' : "") + ' data-i18n="nav.admin"></a>';
     var account;
     if (user) {
-      var name = SS.auth.displayName();
+      var name = SS.auth.displayName(), title = SS.auth.title();
       account = '<a class="user-chip" href="profile.html"' + (page === "profile" ? ' aria-current="page"' : "") + ' title="' + SS.esc(SS.t("nav.account", { name: name })) + '" aria-label="' + SS.esc(SS.t("nav.profileOf", { name: name })) + '">' +
-        SS.avatarHtml(SS.auth.avatarKey(), name) + '<span class="name">' + SS.esc(name) + "</span></a>" +
+        SS.avatarHtml(SS.auth.avatarKey(), name) + '<span class="who"><span class="name">' + SS.esc(name) + "</span>" +
+        (title ? '<span class="title">' + SS.esc(SS.L(title, "name")) + "</span>" : "") + "</span></a>" +
         '<button class="btn ghost sm" type="button" id="logout-btn" data-i18n="nav.logout"></button>';
     } else if (page === "home") {
       account = '<button class="btn ghost sm hide-xs" type="button" data-open-auth="login" data-i18n="nav.login"></button>' +
